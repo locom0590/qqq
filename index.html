@@ -196,6 +196,8 @@
   .rx-rescell .rx-val{font-family:var(--disp);font-weight:900;font-size:24px;margin-top:4px}
   .rx-rescell .rx-val i{font-style:normal;font-size:12px;color:var(--amber)}
   .rx-rating{margin-top:16px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:#8FD49B;border:1px solid rgba(143,212,155,.4);border-radius:10px;padding:8px 14px;display:inline-block}
+  .rx-consent{max-height:170px;overflow-y:auto;text-align:left;font-size:12.5px;line-height:1.6;color:var(--steel);border:1px solid rgba(243,241,235,.16);border-radius:12px;padding:14px 16px;margin-top:16px;width:100%;max-width:430px}
+  .rx-consent b{color:var(--bone)}
   .rx-foot{padding:14px 22px;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--steel);position:relative;z-index:2}
   .rx-toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--bone);color:var(--deep);font-family:var(--mono);font-size:12.5px;padding:10px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:120}
   .rx-toast.rx-show{opacity:1}
@@ -549,10 +551,23 @@
   const toast = document.getElementById('rxToast');
   const closeBtn = document.getElementById('rxClose');
 
-  const store = {
+  const CONSENT_KEY='locomotion_kvkk_ok';
+  const raw={
     get(k){ try { return window.localStorage.getItem(k); } catch(e){ return null; } },
     set(k,v){ try { window.localStorage.setItem(k,v); } catch(e){} }
   };
+  let allowStore=false;
+  const store={
+    get(k){ return allowStore ? raw.get(k) : null; },
+    set(k,v){ if(allowStore) raw.set(k,v); }
+  };
+  const CONSENT_HTML=
+    '<b>KVKK Aydınlatma Metni — Reaksiyon Lab</b><br><br>'+
+    'Bu test sırasında ad, soyad, iletişim bilgisi gibi kişisel veriler toplanmaz ve hiçbir bilgi sunucuya gönderilmez.<br><br>'+
+    'Onay vermeniz halinde yalnızca <b>en iyi skorunuz</b>, tekrar oynadığınızda gösterilmek üzere tarayıcınızın yerel depolama alanında — kendi cihazınızda — saklanır. Bu veri bize iletilmez ve tarayıcı site verilerinizi temizleyerek dilediğiniz an silebilirsiniz.<br><br>'+
+    '"Meydan Oku" özelliği yalnızca sizin paylaşmayı seçtiğiniz bir bağlantı oluşturur; otomatik paylaşım yapılmaz.<br><br>'+
+    'Ayrıntılı bilgi ve veri sorumlusu iletişim bilgileri için: locomotion.com.tr/kvkk<br>'+
+    'Veri Sorumlusu: [Locomotion — ticari unvan/adres]';
 
   let state='idle', times=[], goAt=0, timerId=null;
 
@@ -565,6 +580,24 @@
     for(let i=0;i<TOTAL_ROUNDS;i++) h+='<span class="rx-dot'+(i<times.length?' rx-done':'')+'"></span>';
     return h+'</div>';
   }
+  function showConsent(){
+    state='consent'; stage.className='rx-stage';
+    content.innerHTML=
+      '<div class="rx-eyebrow">Başlamadan Önce</div>'+
+      '<h3>Aydınlatma Metni</h3>'+
+      '<div class="rx-consent">'+CONSENT_HTML+'</div>'+
+      '<div class="rx-btnrow">'+
+        '<button class="rx-btn" id="rxConsentOk">Kabul Et ve Başla</button>'+
+        '<button class="rx-btn rx-ghost" id="rxConsentNo">Kaydetmeden Oyna</button>'+
+      '</div>';
+    document.getElementById('rxConsentOk').addEventListener('click',function(e){
+      e.stopPropagation(); allowStore=true; raw.set(CONSENT_KEY,'1'); showIdle();
+    });
+    document.getElementById('rxConsentNo').addEventListener('click',function(e){
+      e.stopPropagation(); allowStore=false; showIdle();
+    });
+  }
+
   function showIdle(){
     state='idle'; stage.className='rx-stage';
     const best=store.get('locomotion_best_ms');
@@ -657,7 +690,8 @@
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden','false');
     document.body.style.overflow='hidden';
-    showIdle();
+    if(raw.get(CONSENT_KEY)==='1'){ allowStore=true; showIdle(); }
+    else { showConsent(); }
   }
   function closeModal(){
     clearTimeout(timerId);
