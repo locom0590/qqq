@@ -1,1504 +1,679 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<!-- FIX: user-scalable=no / maximum-scale kaldırıldı (WCAG 1.4.4 — yakınlaştırma engellenmemeli). -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Reacto — Refleks Testi</title>
-<meta name="description" content="Dokunma ve yön refleksini ölçen, kimlik toplamayan bir tarayıcı testi.">
-<meta name="theme-color" content="#0D1024">
-
-<!--
-  FIX (CSP): temel bir içerik güvenlik politikası.
-  DİKKAT: STATS_URL'i doldurduğunda o origin'i connect-src'ye eklemelisin, örn:
-  connect-src 'self' https://istatistik.ornek.com;
-  Kendi kendini barındıran bir kuruluma geçersen cdnjs satırını da kaldırabilirsin.
--->
-<meta http-equiv="Content-Security-Policy" content="
-  default-src 'self';
-  script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
-  style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob:;
-  font-src 'self';
-  connect-src 'self';
-  worker-src 'none';
-  manifest-src 'none';
-  base-uri 'none';
-  form-action 'none';
-  frame-ancestors 'none';
-  object-src 'none'">
-
-<!--
-  PWA kaldırıldı: manifest.webmanifest, apple-touch-icon.png ve sw.js
-  referansları vardı ama dosyalar yoktu — her açılışta üç adet 404 üretiyordu.
-  Artık tek dosya: index.html kendi kendine yeter.
-
-  theme-color kalıyor çünkü dosya istemez; Android'de yalnızca tarayıcı
-  çubuğunu renklendirir.
--->
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Locomotion — Academy &amp; Studio</title>
+<meta name="description" content="Hekim değerlendirmesiyle başlayan, bilimsel triyaj protokolüne dayalı medikal fitness. Locomotion Academy & Studio." />
 <style>
-  html,body{margin:0;padding:0;background:#0D1024;}
-  /* FIX: 100vh mobilde adres çubuğu yüzünden zıplıyordu; dvh destekleyen tarayıcı onu kullanır. */
-  .shell{min-height:100vh; min-height:100dvh;}
-  .noscript{color:#EDEFFB;font:16px/1.6 system-ui,sans-serif;max-width:420px;margin:20vh auto;padding:0 24px;text-align:center}
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --bone:#F3F1EB;
+    --bone-2:#EAE7DE;
+    --navy:#1F3864;
+    --deep:#111D33;
+    --deep-2:#1A2A4A;
+    --amber:#D9912B;
+    --steel:#7C8698;
+    --ink:#171E2B;
+    --line:rgba(23,30,43,.12);
+    --radius:22px;
+    --disp:'Archivo',system-ui,sans-serif;
+    --body:'IBM Plex Sans',system-ui,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bone);color:var(--ink);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%}
+  ::selection{background:var(--amber);color:var(--deep)}
+
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  /* ---------- NAV ---------- */
+  nav{position:sticky;top:0;z-index:50;background:rgba(243,241,235,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .wordmark{font-family:var(--disp);font-weight:900;font-size:20px;letter-spacing:.14em;color:var(--navy)}
+  .wordmark small{display:block;font-family:var(--mono);font-weight:400;font-size:9.5px;letter-spacing:.32em;color:var(--steel);margin-top:1px}
+  .nav-links{display:flex;gap:28px;align-items:center;font-size:14px;font-weight:500}
+  .nav-links a{color:#3a4252;transition:color .15s}
+  .nav-links a:hover{color:var(--navy)}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:600;font-size:14px;padding:11px 20px;border-radius:999px;border:1.5px solid var(--navy);color:var(--navy);transition:all .18s;cursor:pointer;background:transparent}
+  .btn:hover{background:var(--navy);color:var(--bone)}
+  .btn.solid{background:var(--navy);color:var(--bone)}
+  .btn.solid:hover{background:var(--deep)}
+  .btn.amber{background:var(--amber);border-color:var(--amber);color:var(--deep)}
+  .btn.amber:hover{background:#c07f21;border-color:#c07f21}
+  @media(max-width:760px){.nav-links a:not(.btn){display:none}}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:72px 0 40px}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--amber);text-transform:uppercase;font-weight:500;margin-bottom:18px}
+  h1{font-family:var(--disp);font-weight:900;font-size:clamp(38px,5.4vw,62px);line-height:1.04;letter-spacing:-.015em;color:var(--navy)}
+  h1 .stroke{color:transparent;-webkit-text-stroke:1.6px var(--navy)}
+  .hero p.lead{margin:22px 0 30px;font-size:17px;color:#454e60;max-width:46ch}
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
+  .hero-note{margin-top:26px;font-family:var(--mono);font-size:12px;color:var(--steel);letter-spacing:.04em}
+
+  /* assessment dashboard panel */
+  .lab{position:relative;background:linear-gradient(160deg,#14213C 0%,#0F1A30 55%,#182B50 100%);border-radius:28px;padding:28px;box-shadow:0 30px 60px -30px rgba(17,29,51,.55);overflow:hidden}
+  .lab::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(243,241,235,.06) 1px,transparent 1px);background-size:26px 26px;pointer-events:none}
+  .dash{position:relative}
+  .dash-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+  .dash-title{font-family:var(--mono);font-size:12px;letter-spacing:.24em;color:rgba(243,241,235,.85);font-weight:500}
+  .dash-tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--amber);border:1px solid rgba(217,145,43,.5);border-radius:999px;padding:4px 10px}
+  .dash-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:center}
+  @media(max-width:460px){.dash-grid{grid-template-columns:1fr}}
+  .radar-wrap svg{display:block;width:100%;height:auto}
+  .metrics{display:flex;flex-direction:column;gap:16px}
+  .metric .m-row{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:rgba(243,241,235,.6);margin-bottom:6px}
+  .metric .m-row b{font-size:15px;color:var(--bone);font-weight:500;letter-spacing:0}
+  .metric .m-row i{font-style:normal;font-size:10px;color:rgba(243,241,235,.45)}
+  .m-bar{height:6px;border-radius:99px;background:rgba(243,241,235,.12);overflow:hidden}
+  .m-bar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#D9912B,#E8B15E)}
+  .dash-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-top:22px;padding-top:18px;border-top:1px solid rgba(243,241,235,.12);flex-wrap:wrap}
+  .spark{flex:1;min-width:170px}
+  .spark-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:rgba(243,241,235,.55);margin-bottom:8px}
+  .spark-label b{color:var(--amber);font-weight:500}
+  .spark svg{width:100%;max-width:200px;height:44px;display:block}
+  .triage-chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:#8FD49B;border:1px solid rgba(143,212,155,.45);background:rgba(46,125,50,.16);border-radius:10px;padding:9px 13px}
+  .dash-note{margin-top:16px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:rgba(243,241,235,.35)}
+
+  /* ---------- GAIT STRIP ---------- */
+  .gait{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bone-2)}
+  .gait-in{display:grid;grid-template-columns:repeat(4,1fr)}
+  @media(max-width:820px){.gait-in{grid-template-columns:repeat(2,1fr)}}
+  .phase{padding:26px 22px;border-left:1px solid var(--line)}
+  .phase:first-child{border-left:none}
+  @media(max-width:820px){.phase:nth-child(3){border-left:none}.phase{border-top:1px solid var(--line)}.phase:nth-child(-n+2){border-top:none}}
+  .phase .ph{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase}
+  .phase h3{font-family:var(--disp);font-weight:800;font-size:17px;color:var(--navy);margin:6px 0 4px}
+  .phase p{font-size:13.5px;color:#596172}
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:88px 0}
+  .sec-head{max-width:640px;margin-bottom:48px}
+  .sec-head h2{font-family:var(--disp);font-weight:900;font-size:clamp(28px,3.6vw,40px);color:var(--navy);letter-spacing:-.01em;line-height:1.12}
+  .sec-head p{margin-top:14px;color:#4b5468;font-size:16px}
+
+  /* approach cards */
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  @media(max-width:820px){.cards{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px;position:relative;transition:transform .2s, box-shadow .2s}
+  .card:hover{transform:translateY(-3px);box-shadow:0 18px 40px -24px rgba(17,29,51,.28)}
+  .card .num{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--amber)}
+  .card h3{font-family:var(--disp);font-weight:800;font-size:20px;color:var(--navy);margin:10px 0 10px}
+  .card p{font-size:14.5px;color:#535c6e}
+
+  /* programs */
+  .prog{background:var(--deep);color:var(--bone);border-radius:34px;padding:72px 0}
+  .prog .sec-head h2{color:var(--bone)}
+  .prog .sec-head p{color:#aab3c4}
+  .prog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:860px){.prog-grid{grid-template-columns:1fr}}
+  .pcard{border:1px solid rgba(243,241,235,.14);border-radius:var(--radius);padding:30px 26px;background:linear-gradient(170deg,rgba(243,241,235,.05),rgba(243,241,235,.01))}
+  .pcard .tag{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--amber);text-transform:uppercase}
+  .pcard h3{font-family:var(--disp);font-weight:800;font-size:22px;margin:12px 0 10px}
+  .pcard p{font-size:14px;color:#b8c0d0}
+  .pcard ul{margin-top:16px;list-style:none}
+  .pcard li{font-size:13.5px;color:#cfd6e2;padding:7px 0;border-top:1px solid rgba(243,241,235,.1);display:flex;gap:10px}
+  .pcard li::before{content:"→";color:var(--amber);flex-shrink:0}
+
+  /* principles */
+  .principles{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:820px){.principles{grid-template-columns:1fr}}
+  .pr{border-top:2px solid var(--navy);padding-top:20px}
+  .pr .big{font-family:var(--disp);font-weight:900;font-size:34px;color:var(--navy);letter-spacing:-.02em}
+  .pr .big span{color:var(--amber)}
+  .pr p{font-size:14px;color:#535c6e;margin-top:8px}
+
+  /* contact / footer */
+  .game-band{background:linear-gradient(150deg,#16233F,#0F1A30);border:1px solid rgba(217,145,43,.4);border-radius:34px;padding:56px 48px;display:flex;align-items:center;justify-content:space-between;gap:36px;flex-wrap:wrap;position:relative;overflow:hidden}
+  .game-band::after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(217,145,43,.18),transparent 70%);pointer-events:none}
+  .game-band h2{font-family:var(--disp);font-weight:900;font-size:clamp(26px,3.2vw,36px);color:var(--bone);letter-spacing:-.01em;margin:14px 0 12px}
+  .game-band p{color:#aab3c4;font-size:15px;max-width:42ch;margin-bottom:24px}
+  .game-band .eyebrow{margin-bottom:0}
+  .game-ms{text-align:right}
+  .game-ms b{font-family:var(--disp);font-weight:900;font-size:clamp(64px,9vw,110px);color:var(--bone);letter-spacing:-.03em;line-height:1;display:block}
+  .game-ms b i{font-style:normal;font-size:.32em;color:var(--amber)}
+  .game-ms span{display:block;margin-top:10px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--steel)}
+  @media(max-width:700px){.game-ms{text-align:left}}
+  .cta-band{background:var(--navy);border-radius:34px;padding:64px 48px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
+  .cta-band h2{font-family:var(--disp);font-weight:900;font-size:clamp(26px,3.2vw,36px);color:var(--bone);letter-spacing:-.01em;max-width:20ch;line-height:1.15}
+  .cta-band p{color:#b9c3d6;margin-top:10px;font-size:15px;max-width:44ch}
+  footer{padding:56px 0 40px;border-top:1px solid var(--line);margin-top:88px}
+  .foot{display:flex;justify-content:space-between;gap:32px;flex-wrap:wrap}
+  .foot .wordmark{font-size:18px}
+  .foot-col{font-size:13.5px;color:#596172}
+  .foot-col b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--navy);text-transform:uppercase;margin-bottom:10px}
+  .foot-col a{display:block;padding:3px 0}
+  .foot-col a:hover{color:var(--navy)}
+  .legal{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--steel);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    html{scroll-behavior:auto}
+  }
+
+  /* ---------- REAKSİYON MODAL (rx- scoped) ---------- */
+  .rx-overlay{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;background:linear-gradient(160deg,#14213C 0%,#0F1A30 60%,#182B50 100%)}
+  .rx-overlay.open{display:flex}
+  .rx-overlay::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(243,241,235,.06) 1px,transparent 1px);background-size:26px 26px;pointer-events:none}
+  .rx-top{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;position:relative;z-index:2}
+  .rx-title{font-family:var(--mono);font-size:12px;letter-spacing:.22em;color:var(--amber)}
+  .rx-close{background:transparent;border:1.5px solid rgba(243,241,235,.35);color:var(--bone);width:42px;height:42px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer;transition:all .15s}
+  .rx-close:hover{border-color:var(--amber);color:var(--amber)}
+  .rx-main{flex:1;display:flex;align-items:center;justify-content:center;padding:16px 20px;position:relative;z-index:2;overflow-y:auto}
+  .rx-stage{width:min(560px,100%);border-radius:26px;min-height:min(62vh,500px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:36px 24px;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;border:1px solid rgba(243,241,235,.14);background:rgba(243,241,235,.04);transition:background .12s;color:var(--bone)}
+  .rx-stage.rx-waiting{background:rgba(224,102,102,.10);border-color:rgba(224,102,102,.4)}
+  .rx-stage.rx-go{background:var(--amber);border-color:var(--amber);color:var(--deep)}
+  .rx-stage.rx-early{background:rgba(224,102,102,.2);border-color:#E06666}
+  .rx-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.26em;color:var(--amber);text-transform:uppercase;margin-bottom:14px}
+  .rx-stage.rx-go .rx-eyebrow{color:var(--deep)}
+  .rx-stage h3{font-family:var(--disp);font-weight:900;font-size:clamp(24px,6vw,38px);line-height:1.1;letter-spacing:-.01em;color:inherit}
+  .rx-stage p{margin-top:14px;font-size:15px;color:var(--steel);max-width:36ch}
+  .rx-stage.rx-go p{color:rgba(20,33,60,.75)}
+  .rx-ms{font-family:var(--disp);font-weight:900;font-size:clamp(64px,16vw,110px);line-height:1;letter-spacing:-.02em}
+  .rx-ms i{font-style:normal;font-size:.32em;color:var(--amber);font-weight:800}
+  .rx-stage.rx-go .rx-ms i{color:var(--deep)}
+  .rx-rounds{display:flex;gap:10px;margin-top:22px}
+  .rx-dot{width:12px;height:12px;border-radius:50%;background:rgba(243,241,235,.18)}
+  .rx-dot.rx-done{background:var(--amber)}
+  .rx-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--disp);font-weight:800;font-size:15px;padding:13px 26px;border-radius:999px;border:none;cursor:pointer;background:var(--amber);color:var(--deep);margin-top:24px;transition:transform .12s}
+  .rx-btn:active{transform:scale(.97)}
+  .rx-btn.rx-ghost{background:transparent;border:1.5px solid rgba(243,241,235,.4);color:var(--bone)}
+  .rx-btnrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .rx-resgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:340px;margin-top:22px}
+  .rx-rescell{border:1px solid rgba(243,241,235,.14);border-radius:14px;padding:12px}
+  .rx-rescell .rx-lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--steel);text-transform:uppercase}
+  .rx-rescell .rx-val{font-family:var(--disp);font-weight:900;font-size:24px;margin-top:4px}
+  .rx-rescell .rx-val i{font-style:normal;font-size:12px;color:var(--amber)}
+  .rx-rating{margin-top:16px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:#8FD49B;border:1px solid rgba(143,212,155,.4);border-radius:10px;padding:8px 14px;display:inline-block}
+  .rx-foot{padding:14px 22px;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--steel);position:relative;z-index:2}
+  .rx-toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--bone);color:var(--deep);font-family:var(--mono);font-size:12.5px;padding:10px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:120}
+  .rx-toast.rx-show{opacity:1}
 </style>
-
-<!--
-  FIX (SRI): Aşağıdaki iki dosya üçüncü taraf bir CDN'den geliyor ve bütünlük doğrulaması YOK.
-  CDN ele geçirilirse sayfada keyfi kod çalışır. İki seçenekten birini uygula:
-
-  A) Dosyaları kendi sunucuna kopyala ve src'leri "./vendor/react.production.min.js" yap (önerilen).
-  B) SRI hash'i ekle. Hash'i şöyle üret:
-       curl -s https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js \
-         | openssl dgst -sha384 -binary | openssl base64 -A
-     Çıkan değeri integrity="sha384-..." olarak yaz.
-  Hash'i tahminle yazma — yanlış hash sayfayı tamamen çalışmaz hale getirir.
--->
-<script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 </head>
 <body>
-<div id="root"></div>
 
-<noscript>
-  <div class="noscript">
-    <b>Reacto çalışmak için JavaScript'e ihtiyaç duyuyor.</b><br>
-    Tarayıcı ayarlarından JavaScript'i açıp sayfayı yenile.
+<nav>
+  <div class="wrap nav-in">
+    <a href="#top" class="wordmark">LOCOMOTION<small>ACADEMY &amp; STUDIO</small></a>
+    <div class="nav-links">
+      <a href="#yaklasim">Yaklaşım</a>
+      <a href="#programlar">Programlar</a>
+      <a href="#ilkeler">İlkeler</a>
+      <a href="reaksiyon.html">Reaksiyon ⚡</a>
+      <a href="#iletisim" class="btn solid">Değerlendirme Randevusu</a>
+    </div>
   </div>
-</noscript>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Medikal Fitness · Hareket Bilimi</div>
+      <h1>Hareketi<br><span class="stroke">bilimle</span><br>yeniden kur.</h1>
+      <p class="lead">Locomotion'da her program bir hekim değerlendirmesiyle başlar. Üç filtreli klinik
+      triyaj, yazılı onay ve bölgeye özel hareket protokolleri — antrenman güvenliği, sistemin kendisidir.</p>
+      <div class="hero-ctas">
+        <a href="#iletisim" class="btn amber">Değerlendirme Planla</a>
+        <a href="#yaklasim" class="btn">Sürecimizi İncele</a>
+      </div>
+      <div class="hero-note">locomotion.com.tr — hekim onayı olmadan program başlamaz.</div>
+    </div>
+    <div class="lab">
+      <div class="dash">
+        <div class="dash-head">
+          <span class="dash-title">DEĞERLENDİRME ÖZETİ</span>
+          <span class="dash-tag">ÖRNEK RAPOR</span>
+        </div>
+        <div class="dash-grid">
+          <div class="radar-wrap">
+            <svg viewBox="0 0 300 300" role="img" aria-label="Altı vücut bölgesi için hareket skoru radar grafiği">
+              <!-- rings -->
+              <polygon points="150,45 240.9,97.5 240.9,202.5 150,255 59.1,202.5 59.1,97.5" fill="none" stroke="rgba(243,241,235,0.16)" stroke-width="1"/>
+              <polygon points="150,80.7 210,115.35 210,184.65 150,219.3 90,184.65 90,115.35" fill="none" stroke="rgba(243,241,235,0.12)" stroke-width="1"/>
+              <polygon points="150,115.35 180,132.7 180,167.3 150,184.65 120,167.3 120,132.7" fill="none" stroke="rgba(243,241,235,0.10)" stroke-width="1"/>
+              <!-- axes -->
+              <g stroke="rgba(243,241,235,0.10)" stroke-width="1">
+                <line x1="150" y1="150" x2="150" y2="45"/>
+                <line x1="150" y1="150" x2="240.9" y2="97.5"/>
+                <line x1="150" y1="150" x2="240.9" y2="202.5"/>
+                <line x1="150" y1="150" x2="150" y2="255"/>
+                <line x1="150" y1="150" x2="59.1" y2="202.5"/>
+                <line x1="150" y1="150" x2="59.1" y2="97.5"/>
+              </g>
+              <!-- data -->
+              <polygon points="150,68.1 206.4,117.45 213.66,186.75 150,219.3 97.3,180.45 82.7,111.15"
+                       fill="rgba(217,145,43,0.20)" stroke="#D9912B" stroke-width="2" stroke-linejoin="round"/>
+              <g fill="#D9912B">
+                <circle cx="150" cy="68.1" r="4"/>
+                <circle cx="206.4" cy="117.45" r="4"/>
+                <circle cx="213.66" cy="186.75" r="4"/>
+                <circle cx="150" cy="219.3" r="4"/>
+                <circle cx="97.3" cy="180.45" r="4"/>
+                <circle cx="82.7" cy="111.15" r="4"/>
+              </g>
+              <!-- labels -->
+              <g font-family="IBM Plex Mono, monospace" font-size="10" fill="rgba(243,241,235,0.6)" letter-spacing="1">
+                <text x="150" y="32" text-anchor="middle">BEL/BOYUN</text>
+                <text x="252" y="92" text-anchor="start">OMUZ</text>
+                <text x="252" y="214" text-anchor="start">DİZ</text>
+                <text x="150" y="276" text-anchor="middle">KALÇA</text>
+                <text x="48" y="214" text-anchor="end">AYAK B.</text>
+                <text x="48" y="92" text-anchor="end">DİRSEK</text>
+              </g>
+            </svg>
+          </div>
+          <div class="metrics">
+            <div class="metric">
+              <div class="m-row"><span>MOBİLİTE</span><b>78<i>/100</i></b></div>
+              <div class="m-bar"><span style="width:78%"></span></div>
+            </div>
+            <div class="metric">
+              <div class="m-row"><span>STABİLİTE</span><b>64<i>/100</i></b></div>
+              <div class="m-bar"><span style="width:64%"></span></div>
+            </div>
+            <div class="metric">
+              <div class="m-row"><span>KUVVET</span><b>71<i>/100</i></b></div>
+              <div class="m-bar"><span style="width:71%"></span></div>
+            </div>
+            <div class="metric">
+              <div class="m-row"><span>SAĞ/SOL SİMETRİ</span><b>%92</b></div>
+              <div class="m-bar"><span style="width:92%"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="dash-foot">
+          <div class="spark">
+            <div class="spark-label">VAS AĞRI TRENDİ <b>8 → 2</b> · 8 HAFTA</div>
+            <svg viewBox="0 0 162 44" preserveAspectRatio="none" aria-label="Sekiz haftalık ağrı skoru düşüş grafiği">
+              <polyline points="4,10 26,14 48,14 70,18 92,22 114,26 136,30 158,34"
+                        fill="none" stroke="#D9912B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="158" cy="34" r="3.5" fill="#F3F1EB"/>
+            </svg>
+          </div>
+          <div class="triage-chip">TRİYAJ: FİLTRE 3 · KISITLAMALI KABUL</div>
+        </div>
+        <div class="dash-note">Temsili veridir — gerçek üye verisi değildir.</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- GAIT STRIP: member journey mapped to gait phases -->
+<div class="gait">
+  <div class="wrap gait-in">
+    <div class="phase reveal">
+      <div class="ph">01 · Heel Strike</div>
+      <h3>Değerlendirme</h3>
+      <p>Hekim muayenesi ve üç filtreli klinik triyaj. Gerekirse görüntüleme ve FTR yönlendirmesi.</p>
+    </div>
+    <div class="phase reveal">
+      <div class="ph">02 · Mid Stance</div>
+      <h3>Programlama</h3>
+      <p>Bölgeye özel hareket kısıtlamalarıyla, yazılı onaya dayalı kişisel program.</p>
+    </div>
+    <div class="phase reveal">
+      <div class="ph">03 · Toe Off</div>
+      <h3>Güçlenme</h3>
+      <p>Kademeli yüklenme; her seansta semptom takibi ve kayıt.</p>
+    </div>
+    <div class="phase reveal">
+      <div class="ph">04 · Swing</div>
+      <h3>Sürdürülebilirlik</h3>
+      <p>4–6 haftalık periyodik yeniden değerlendirme ile uzun vadeli ilerleme.</p>
+    </div>
+  </div>
+</div>
+
+<!-- YAKLAŞIM -->
+<section id="yaklasim">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>Spor salonu değil,<br>klinik bir süreç.</h2>
+      <p>Locomotion'ın işleyişi yazılı bir standart işletim prosedürüne dayanır: kimin doğrudan
+      programa başlayabileceği, kimin önce rehabilitasyona yönlendirileceği önceden tanımlı
+      klinik kriterlerle belirlenir.</p>
+    </div>
+    <div class="cards">
+      <div class="card reveal">
+        <div class="num">ADIM / 01</div>
+        <h3>Hekim Değerlendirmesi</h3>
+        <p>Her üye, programa başlamadan önce muayene edilir. Bel/boyun, omuz, diz, kalça, ayak bileği
+        ve dirsek/el bileği için ayrı klinik triyaj protokolleri uygulanır.</p>
+      </div>
+      <div class="card reveal">
+        <div class="num">ADIM / 02</div>
+        <h3>FTR Köprüsü</h3>
+        <p>Aktif bulgusu olan üyeler önce fiziksel tıp ve rehabilitasyon sürecine yönlendirilir;
+        salona geçiş yalnızca yazılı transfer notuyla gerçekleşir.</p>
+      </div>
+      <div class="card reveal">
+        <div class="num">ADIM / 03</div>
+        <h3>Kısıtlamalı Programlama</h3>
+        <p>Hekim onay formunda her hareket grubu tek tek tanımlanır: serbest, sınırlı veya yasak.
+        Antrenör bu sınırların dışına çıkmaz.</p>
+      </div>
+      <div class="card reveal">
+        <div class="num">ADIM / 04</div>
+        <h3>Sürekli Takip</h3>
+        <p>Semptomlar her seansta kaydedilir; herhangi bir kötüleşmede egzersiz durdurulur ve
+        üye aynı gün hekime geri yönlendirilir.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMLAR -->
+<section id="programlar" style="padding-top:0">
+  <div class="wrap">
+    <div class="prog">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <h2>Programlar</h2>
+          <p>Üç ana hat: klinik gereksinimi olanlar, performansını geliştirmek isteyenler ve
+          bu yaklaşımı öğrenmek isteyen profesyoneller.</p>
+        </div>
+        <div class="prog-grid">
+          <div class="pcard reveal">
+            <div class="tag">Studio</div>
+            <h3>Medikal Fitness</h3>
+            <p>Kas-iskelet sistemi şikayeti olan üyeler için hekim onaylı, bölgeye özel programlar.</p>
+            <ul>
+              <li>Üç filtreli klinik triyaj</li>
+              <li>Bölgeye özel hareket kısıtlamaları</li>
+              <li>Periyodik yeniden değerlendirme</li>
+            </ul>
+          </div>
+          <div class="pcard reveal">
+            <div class="tag">Studio</div>
+            <h3>Performans &amp; Kondisyon</h3>
+            <p>Sağlıklı bireyler için hareket kalitesi önceliğiyle kurgulanmış güç ve kondisyon antrenmanı.</p>
+            <ul>
+              <li>Hareket taraması ile başlangıç</li>
+              <li>Kademeli yüklenme modeli</li>
+              <li>Veriyle takip edilen ilerleme</li>
+            </ul>
+          </div>
+          <div class="pcard reveal">
+            <div class="tag">Academy</div>
+            <h3>Eğitimler &amp; Atölyeler</h3>
+            <p>Antrenörler ve sağlık profesyonelleri için klinik triyaj ve güvenli programlama eğitimleri.</p>
+            <ul>
+              <li>Red flag tanıma atölyeleri</li>
+              <li>Vaka temelli programlama</li>
+              <li>Kurum içi protokol danışmanlığı</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- İLKELER -->
+<section id="ilkeler">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>Sayılarla sistem</h2>
+      <p>Güven, söylemle değil yapıyla kurulur. Locomotion'ın işleyişini tanımlayan yapı taşları:</p>
+    </div>
+    <div class="principles">
+      <div class="pr reveal">
+        <div class="big">3<span>×</span> Filtre</div>
+        <p>Her başvuru üç aşamalı klinik triyajdan geçer: acil sevk, rehabilitasyon yönlendirmesi
+        veya kısıtlamalı kabul.</p>
+      </div>
+      <div class="pr reveal">
+        <div class="big">6 <span>Bölge</span></div>
+        <p>Bel/boyun, omuz, diz, kalça, ayak bileği ve dirsek/el bileği için ayrı yazılı protokoller.</p>
+      </div>
+      <div class="pr reveal">
+        <div class="big">0 <span>İstisna</span></div>
+        <p>Yazılı hekim onayı ve aydınlatılmış onam olmadan hiçbir program başlamaz.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REAKSİYON LAB -->
+<section id="reaksiyon" style="padding-top:0">
+  <div class="wrap">
+    <div class="game-band reveal">
+      <div class="game-left">
+        <div class="eyebrow">Reaksiyon Lab ⚡</div>
+        <h2>Refleksin ne kadar hızlı?</h2>
+        <p>5 tur, ortalaman skorun. Tarayıcıda çalışır, uygulama gerekmez —
+        skorunu paylaş, arkadaşına meydan oku.</p>
+        <a class="btn amber" href="reaksiyon.html">Testi Başlat</a>
+      </div>
+      <div class="game-ms">
+        <b>247<i>ms</i></b>
+        <span>ORTALAMA İNSAN: ~273 MS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="iletisim" style="padding-top:0">
+  <div class="wrap">
+    <div class="cta-band reveal">
+      <div>
+        <h2>İlk adım bir antrenman değil, bir değerlendirmedir.</h2>
+        <p>Randevu ve bilgi için bize ulaşın — ekibimiz süreci adım adım anlatır.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+        <a class="btn amber" href="tel:+900000000000">+90 (000) 000 00 00</a>
+        <a class="btn" style="border-color:var(--bone);color:var(--bone)" href="mailto:info@locomotion.com.tr">info@locomotion.com.tr</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <div class="wordmark">LOCOMOTION<small>ACADEMY &amp; STUDIO</small></div>
+        <p style="margin-top:14px;font-size:13px;color:#596172;max-width:32ch">Hareket bilimine dayalı,
+        hekim değerlendirmeli medikal fitness stüdyosu.</p>
+      </div>
+      <div class="foot-col">
+        <b>Keşfet</b>
+        <a href="#yaklasim">Yaklaşım</a>
+        <a href="#programlar">Programlar</a>
+        <a href="#ilkeler">İlkeler</a>
+        <a href="reaksiyon.html">Reaksiyon Lab ⚡</a>
+      </div>
+      <div class="foot-col">
+        <b>İletişim</b>
+        <a href="mailto:info@locomotion.com.tr">info@locomotion.com.tr</a>
+        <a href="https://locomotion.com.tr">locomotion.com.tr</a>
+        <a href="#">Adres — [salon adresi]</a>
+      </div>
+      <div class="foot-col">
+        <b>Yasal</b>
+        <a href="#">KVKK Aydınlatma Metni</a>
+        <a href="#">Çerez Politikası</a>
+        <a href="#">Kullanım Koşulları</a>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Locomotion Academy &amp; Studio</span>
+      <span>Bu site bilgilendirme amaçlıdır; tanı veya tedavi vaadi içermez.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- REAKSİYON MODAL -->
+<div class="rx-overlay" id="rxOverlay" aria-hidden="true" role="dialog" aria-label="Reaksiyon testi">
+  <div class="rx-top">
+    <div class="rx-title">REAKSİYON LAB ⚡</div>
+    <button class="rx-close" id="rxClose" aria-label="Kapat">×</button>
+  </div>
+  <div class="rx-main">
+    <div class="rx-stage" id="rxStage"><div id="rxContent"></div></div>
+  </div>
+  <div class="rx-foot">locomotion.com.tr</div>
+</div>
+<div class="rx-toast" id="rxToast"></div>
 
 <script>
-// FIX: React yüklenemezse kullanıcı bomboş koyu bir ekranla kalmasın.
-if (typeof React === "undefined" || typeof ReactDOM === "undefined") {
-  document.getElementById("root").innerHTML =
-    '<div class="noscript"><b>Uygulama yüklenemedi.</b><br>' +
-    'Gerekli dosyalara ulaşılamıyor. Bağlantını kontrol edip sayfayı yenile.</div>';
-}
-</script>
+/* ---------- scroll reveal ---------- */
+(function(){
+  const els=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){ els.forEach(e=>e.classList.add('in')); return; }
+  const io=new IntersectionObserver((ents)=>{
+    ents.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} });
+  },{threshold:0.14});
+  els.forEach(e=>io.observe(e));
+})();
 
-<script>
- function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
-const { useState, useRef, useEffect, useCallback } = React;
+/* ---------- Reaksiyon Lab modal engine ---------- */
+(function(){
+  const TOTAL_ROUNDS = 5;
+  const overlay = document.getElementById('rxOverlay');
+  const stage = document.getElementById('rxStage');
+  const content = document.getElementById('rxContent');
+  const toast = document.getElementById('rxToast');
+  const closeBtn = document.getElementById('rxClose');
 
-// =============== ANONİM İSTATİSTİK ===============
-// Resmi test tamamlanınca (5 denemenin medyanı) buraya POST edilir.
-// Boş bırakılırsa hiçbir gönderim yapılmaz. Kendi endpoint adresini yaz.
-//
-// ÖNEMLİ (KVKK) — sunucu tarafında yapılması ZORUNLU olanlar:
-//  1. IP adresi loglamayı kapat veya isteği aldığın anda sil. Bunu istemci
-//     garanti EDEMEZ; her HTTP isteği IP'yi zorunlu olarak taşır. Bu yüzden
-//     kullanıcıya gösterilen metin artık "sunucumuzda saklanmaz" diyor.
-//  2. Gövde dışında hiçbir başlık (User-Agent, Referer) kaydetme.
-//  3. Gövdeyi DOĞRULA. Endpoint herkese açık; istemci tarafı kontrolleri
-//     atlanabilir. Kabul kriterleri:
-//       test      : "tap" | "tilt"
-//       medianMs  : 100–5000 arası tamsayı
-//       attempts  : uzunluğu tam 5, her biri 100–5000
-//       wrong     : 0–50 tamsayı
-//       ageRange  : ["18-24","25-34","35-44","45-54","55+"] içinden biri ("u18" gelirse ATIL)
-//       team      : ["cikis","kale","pist","ring"] içinden biri
-//       sim       : boolean — true ise ölçüm sensörle DEĞİL, parmak sürüklemesiyle
-//                   yapılmıştır; gerçek tepki süresi havuzuna KARIŞTIRMA.
-//  4. IP başına kaba bir hız sınırı koy (veri havuzunu zehirlemeyi zorlaştırır).
-//
-// Gönderilen paket:
-// { test, medianMs, attempts, wrong, sim, ageRange, team, day, consentVersion }
-const STATS_URL = "";
-
-// Aydınlatma metninin adresi. Boş bırakılırsa rıza ekranındaki bağlantı hiç
-// gösterilmez (olmayan bir sayfaya 404 vermemek için). STATS_URL'i doldurup
-// gerçekten veri toplamaya başlarsan bunu da doldurman gerekir.
-const AYDINLATMA_URL = "";
-
-const AGE_RANGES = [
-  { id:"u18",   label:"18 yaş altı" },
-  { id:"18-24", label:"18–24" },
-  { id:"25-34", label:"25–34" },
-  { id:"35-44", label:"35–44" },
-  { id:"45-54", label:"45–54" },
-  { id:"55+",   label:"55+" },
-];
-
-// Takımlar: refleksin gerçekten ölçüldüğü dört alan. Sloganlardaki ms değerleri
-// gerçek rakamlara dayanır — 100 ms hatalı çıkış eşiği atletizmde resmi kuraldır,
-// eskrimde epe kilitlenme süresi ~45 ms'dir. Penaltı ve boks rakamları yaygın
-// olarak alıntılanan yaklaşık değerlerdir; yayına almadan önce doğrula.
-const TEAMS = [
-  { id:"cikis", name:"ÇIKIŞ", emoji:"🏁", color:"#FFE14D", desc:"100 ms altı hatalı çıkış.",  arena:"Atletizm çıkış blokları" },
-  { id:"kale",  name:"KALE",  emoji:"🥅", color:"#4DFFB0", desc:"Yön seçmek için 300 ms.",    arena:"Penaltı noktası" },
-  { id:"pist",  name:"PİST",  emoji:"🤺", color:"#FF5C6E", desc:"Farkı 45 ms belirler.",      arena:"Eskrim pisti" },
-  { id:"ring",  name:"RİNG",  emoji:"🥊", color:"#8EA3FF", desc:"Kaçış 250 ms'den hızlı.",    arena:"Boks ringi" },
-];
-const teamOf = (id) => TEAMS.find(t => t.id === id) || null;
-
-// Her takımın kendi alanından gelen motifi. 140x60 viewBox; kart içinde ve
-// başlık rozetinde aynı çizim kullanılır.
-function TeamMotif({ id, color }) {
-  const shapes = {
-    cikis: React.createElement(React.Fragment, null
-      , React.createElement('rect', { x:"0", y:"0", width:"140", height:"60", fill:"#2E2410" })
-      , React.createElement('line', { x1:"0", y1:"15", x2:"140", y2:"15", stroke:"#5C4A18", strokeWidth:"1.5" })
-      , React.createElement('line', { x1:"0", y1:"30", x2:"140", y2:"30", stroke:"#5C4A18", strokeWidth:"1.5" })
-      , React.createElement('line', { x1:"0", y1:"45", x2:"140", y2:"45", stroke:"#5C4A18", strokeWidth:"1.5" })
-      , React.createElement('rect', { x:"18", y:"0", width:"4", height:"60", fill:color })
-      , React.createElement('rect', { x:"10", y:"18", width:"10", height:"9", fill:color, opacity:"0.5" })
-      , React.createElement('rect', { x:"10", y:"33", width:"10", height:"9", fill:color, opacity:"0.5" })
-    ),
-    kale: React.createElement(React.Fragment, null
-      , React.createElement('rect', { x:"14", y:"6", width:"112", height:"44", fill:"#0E2C20" })
-      , React.createElement('g', { stroke:"#1F5C42", strokeWidth:"1" }
-        , React.createElement('line', { x1:"28", y1:"6", x2:"28", y2:"50" })
-        , React.createElement('line', { x1:"42", y1:"6", x2:"42", y2:"50" })
-        , React.createElement('line', { x1:"56", y1:"6", x2:"56", y2:"50" })
-        , React.createElement('line', { x1:"70", y1:"6", x2:"70", y2:"50" })
-        , React.createElement('line', { x1:"84", y1:"6", x2:"84", y2:"50" })
-        , React.createElement('line', { x1:"98", y1:"6", x2:"98", y2:"50" })
-        , React.createElement('line', { x1:"112", y1:"6", x2:"112", y2:"50" })
-        , React.createElement('line', { x1:"14", y1:"17", x2:"126", y2:"17" })
-        , React.createElement('line', { x1:"14", y1:"28", x2:"126", y2:"28" })
-        , React.createElement('line', { x1:"14", y1:"39", x2:"126", y2:"39" })
-      )
-      , React.createElement('rect', { x:"14", y:"6", width:"112", height:"44", fill:"none", stroke:color, strokeWidth:"2.5" })
-      , React.createElement('circle', { cx:"36", cy:"22", r:"5", fill:color })
-    ),
-    pist: React.createElement(React.Fragment, null
-      , React.createElement('rect', { x:"0", y:"34", width:"140", height:"14", fill:"#241418" })
-      , React.createElement('line', { x1:"0", y1:"34", x2:"140", y2:"34", stroke:"#4A2A30", strokeWidth:"1" })
-      , React.createElement('line', { x1:"70", y1:"30", x2:"70", y2:"52", stroke:"#8A5A62", strokeWidth:"1", strokeDasharray:"2 2" })
-      , React.createElement('rect', { x:"26", y:"6", width:"34", height:"20", rx:"3", fill:color })
-      , React.createElement('rect', { x:"80", y:"6", width:"34", height:"20", rx:"3", fill:"#2E1A1E", stroke:"#4A2A30", strokeWidth:"1" })
-    ),
-    ring: React.createElement(React.Fragment, null
-      , React.createElement('rect', { x:"0", y:"0", width:"140", height:"60", fill:"#141A38" })
-      , React.createElement('line', { x1:"0", y1:"18", x2:"140", y2:"18", stroke:color, strokeWidth:"2.5" })
-      , React.createElement('line', { x1:"0", y1:"32", x2:"140", y2:"32", stroke:"#4A5694", strokeWidth:"2.5" })
-      , React.createElement('line', { x1:"0", y1:"46", x2:"140", y2:"46", stroke:"#2E3766", strokeWidth:"2.5" })
-      , React.createElement('rect', { x:"16", y:"4", width:"8", height:"52", fill:color })
-      , React.createElement('rect', { x:"116", y:"4", width:"8", height:"52", fill:"#2E3766" })
-    ),
+  const store = {
+    get(k){ try { return window.localStorage.getItem(k); } catch(e){ return null; } },
+    set(k,v){ try { window.localStorage.setItem(k,v); } catch(e){} }
   };
-  if (!shapes[id]) return null;
-  return React.createElement('svg', {
-    viewBox:"0 0 140 60", style:{ width:"100%", height:"auto", display:"block", borderRadius:6 },
-    role:"presentation", focusable:"false",
-  }, shapes[id]);
-}
 
-// Profil sadece bu cihazda saklanır (localStorage). Bazı önizleme ortamlarında
-// localStorage kapalı olabilir; o durumda sessizce oturum içi çalışır.
-// FIX: anahtar v2'ye çıkarıldı — v1 profillerinde rıza tarihi/sürümü yoktu,
-// bu yüzden eski kayıtlar geçersiz sayılıp onboarding tekrar gösteriliyor.
-const PROFILE_KEY = "reacto.profile.v2";
-// FIX (KVKK): rıza metnini her değiştirdiğinde bu sayıyı artır ki eski rızalar
-// otomatik geçerli sayılmasın. consentAt ile birlikte rızayı ispat edilebilir kılar.
-const CONSENT_VERSION = 1;
-const loadProfile = () => {
-  try {
-    const raw = localStorage.getItem(PROFILE_KEY);
-    if (!raw) return null;
-    const p = JSON.parse(raw);
-    // FIX: rıza metni güncellendiyse profili geçersiz say, yeniden sor.
-    if (!p || p.consentVersion !== CONSENT_VERSION) return null;
-    // Takım kimlikleri değişti (volt/sinyal/itki/sogutma → cikis/kale/pist/ring).
-    // Eskisini taşıyan profil takım seçimini tekrar yapsın, aksi halde renk/motif
-    // bulunamayıp arayüz varsayılana düşer.
-    if (p.team && !teamOf(p.team)) return null;
-    return p;
+  let state='idle', times=[], goAt=0, timerId=null;
+
+  function shareUrl(avg){
+    const dir = window.location.pathname.replace(/[^/]*$/, '');
+    return window.location.origin + dir + 'reaksiyon.html?hedef=' + avg;
   }
-  catch (e2) { return null; }
-};
-const saveProfile = (p) => { try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch (e3) {} };
-const clearProfile = () => { try { localStorage.removeItem(PROFILE_KEY); } catch (e4) {} };
+  function dots(){
+    let h='<div class="rx-rounds">';
+    for(let i=0;i<TOTAL_ROUNDS;i++) h+='<span class="rx-dot'+(i<times.length?' rx-done':'')+'"></span>';
+    return h+'</div>';
+  }
+  function showIdle(){
+    state='idle'; stage.className='rx-stage';
+    const best=store.get('locomotion_best_ms');
+    content.innerHTML=
+      '<div class="rx-eyebrow">Reaksiyon Testi</div>'+
+      '<h3>Ne kadar hızlısın?</h3>'+
+      '<p>Ekran <b style="color:var(--amber)">amber</b> renge döndüğü an dokun. '+TOTAL_ROUNDS+' tur, ortalaman skorun.</p>'+
+      (best?'<p style="font-family:var(--mono);font-size:12px;letter-spacing:.12em;margin-top:10px;color:var(--bone)">EN İYİN: '+best+' ms</p>':'')+
+      '<button class="rx-btn" id="rxStartBtn">Başla</button>';
+    document.getElementById('rxStartBtn').addEventListener('click',function(e){e.stopPropagation();startRound();});
+  }
+  function startRound(){
+    state='waiting'; stage.className='rx-stage rx-waiting';
+    content.innerHTML=
+      '<div class="rx-eyebrow">Tur '+(times.length+1)+' / '+TOTAL_ROUNDS+'</div>'+
+      '<h3>Bekle…</h3>'+
+      '<p>Amber rengi görünce dokun. Erken dokunma!</p>'+dots();
+    timerId=setTimeout(function(){
+      state='go'; stage.className='rx-stage rx-go'; goAt=performance.now();
+      content.innerHTML='<div class="rx-eyebrow">Şimdi</div><h3>DOKUN!</h3>';
+    }, 1500+Math.random()*2500);
+  }
+  function earlyTap(){
+    clearTimeout(timerId); state='early'; stage.className='rx-stage rx-early';
+    content.innerHTML=
+      '<div class="rx-eyebrow">Erken!</div>'+
+      '<h3>Amber\'i beklemen gerekiyordu.</h3>'+
+      '<p>Dokun, aynı turu tekrar deneyelim.</p>'+dots();
+  }
+  function recordTap(){
+    const ms=Math.round(performance.now()-goAt);
+    times.push(ms);
+    if(times.length>=TOTAL_ROUNDS){ showFinal(); return; }
+    state='roundResult'; stage.className='rx-stage';
+    content.innerHTML=
+      '<div class="rx-eyebrow">Tur '+times.length+' / '+TOTAL_ROUNDS+'</div>'+
+      '<div class="rx-ms">'+ms+'<i> ms</i></div>'+dots()+
+      '<p>Devam etmek için dokun.</p>';
+  }
+  function rating(avg){
+    if(avg<200) return 'REFLEKS MAKİNESİ ⚡';
+    if(avg<250) return 'SPORCU SEVİYESİ';
+    if(avg<300) return 'ORTALAMA ÜSTÜ';
+    if(avg<350) return 'ORTALAMA';
+    return 'ISINMAN LAZIM 🙂';
+  }
+  function showFinal(){
+    state='finished'; stage.className='rx-stage';
+    const avg=Math.round(times.reduce(function(a,b){return a+b;},0)/times.length);
+    const best=Math.min.apply(null,times);
+    const prev=parseInt(store.get('locomotion_best_ms')||'99999',10);
+    if(avg<prev) store.set('locomotion_best_ms',String(avg));
+    content.innerHTML=
+      '<div class="rx-eyebrow">Sonuç</div>'+
+      '<div class="rx-ms">'+avg+'<i> ms</i></div>'+
+      '<div class="rx-resgrid">'+
+        '<div class="rx-rescell"><div class="rx-lbl">En Hızlı Tur</div><div class="rx-val">'+best+'<i> ms</i></div></div>'+
+        '<div class="rx-rescell"><div class="rx-lbl">Tur Sayısı</div><div class="rx-val">'+TOTAL_ROUNDS+'</div></div>'+
+      '</div>'+
+      '<div class="rx-rating">'+rating(avg)+'</div>'+
+      '<div class="rx-btnrow">'+
+        '<button class="rx-btn" id="rxShareBtn">Meydan Oku 🔗</button>'+
+        '<button class="rx-btn rx-ghost" id="rxAgainBtn">Tekrar</button>'+
+      '</div>';
+    document.getElementById('rxAgainBtn').addEventListener('click',function(e){e.stopPropagation();times=[];startRound();});
+    document.getElementById('rxShareBtn').addEventListener('click',function(e){
+      e.stopPropagation();
+      const url=shareUrl(avg);
+      const text='Locomotion Reaksiyon Lab\u2019da ortalamam '+avg+' ms. Ge\u00e7ebilir misin? \u26a1';
+      if(navigator.share){ navigator.share({title:'Locomotion Reaksiyon Lab',text:text,url:url}).catch(function(){}); }
+      else if(navigator.clipboard){ navigator.clipboard.writeText(text+' '+url).then(function(){ showToast('Link kopyalandı — arkadaşına gönder!'); }); }
+      else { showToast(url); }
+    });
+  }
+  function showToast(msg){
+    toast.textContent=msg; toast.classList.add('rx-show');
+    setTimeout(function(){toast.classList.remove('rx-show');},2600);
+  }
 
-// Gönderim: yalnızca onay verilmiş + 18 yaş üstü + STATS_URL tanımlı ise.
-// Kimlik yok, çerez yok, saat yok (yalnızca gün). Hata sessizce yutulur.
-const sendStats = (profile, payload) => {
-  if (!STATS_URL) return;
-  if (!profile || profile.consent !== "accepted" || profile.ageRange === "u18") return;
-  const body = JSON.stringify({
-    ...payload,
-    ageRange: profile.ageRange,
-    team: profile.team,
-    day: new Date().toISOString().slice(0, 10),
-    consentVersion: CONSENT_VERSION,
+  stage.addEventListener('pointerdown',function(){
+    if(state==='waiting') earlyTap();
+    else if(state==='go') recordTap();
+    else if(state==='early') startRound();
+    else if(state==='roundResult') startRound();
   });
-  try {
-    if (navigator.sendBeacon) {
-      // FIX: "application/json" CORS preflight tetikler ve sendBeacon preflight yapamaz —
-      // istek sessizce düşerdi. text/plain "simple request" olduğu için preflight'sız gider.
-      // SUNUCU TARAFI: gövdeyi Content-Type'a bakmadan JSON olarak parse et.
-      const ok = navigator.sendBeacon(STATS_URL, new Blob([body], { type: "text/plain;charset=UTF-8" }));
-      if (ok) return;
-    }
-    fetch(STATS_URL, { method:"POST", headers:{ "Content-Type":"text/plain;charset=UTF-8" }, body, keepalive:true }).catch(()=>{});
-  } catch (e5) {}
-};
 
-// =============== SEVİYELER ===============
-const TIERS_TAP = [
-  { max: 200,      name: "TURBO MODE",   emoji: "⚡", color: "#FFE14D", msg: "Makine hızı. İnsan mısın sen?" },
-  { max: 250,      name: "OVERCLOCKED",  emoji: "🔥", color: "#FF7A45", msg: "Limitler zorlanıyor. Elit seviye." },
-  { max: 300,      name: "BOOSTED",      emoji: "🚀", color: "#4DFFB0", msg: "Hızlandırılmış modda çalışıyorsun." },
-  { max: 400,      name: "ONLINE",       emoji: "✅", color: "#4DA6FF", msg: "Sistem çalışıyor. Sağlam ortalama." },
-  { max: 500,      name: "STANDBY",      emoji: "🔋", color: "#9B8CFF", msg: "Bekleme modundasın. Uyanabilirsin." },
-  { max: 650,      name: "LOW BATTERY",  emoji: "🐌", color: "#C9A15A", msg: "Şarj lazım. Bir kahve iyi gider." },
-  { max: 1000,     name: "SLEEP MODE",   emoji: "💤", color: "#7C86A0", msg: "Uykuda yakalandın." },
-  { max: Infinity, name: "OFFLINE",      emoji: "🔌", color: "#5A6172", msg: "Fişin çekilmiş. Yeniden bağlan." },
-];
-// Seçimli tepki (yön) basit tepkiden ~150 ms yavaştır; sınırlar kaydırıldı
-const TIERS_TILT = [
-  { max: 300,      name: "TURBO MODE",   emoji: "⚡", color: "#FFE14D", msg: "Karar + hareket, göz açıp kapayana kadar." },
-  { max: 375,      name: "OVERCLOCKED",  emoji: "🔥", color: "#FF7A45", msg: "Bilek ve beyin senkronize. Elit." },
-  { max: 450,      name: "BOOSTED",      emoji: "🚀", color: "#4DFFB0", msg: "Hızlı karar, temiz hareket." },
-  { max: 575,      name: "ONLINE",       emoji: "✅", color: "#4DA6FF", msg: "Sistem çalışıyor. Sağlam ortalama." },
-  { max: 700,      name: "STANDBY",      emoji: "🔋", color: "#9B8CFF", msg: "Biraz düşündün, sonra hareket ettin." },
-  { max: 900,      name: "LOW BATTERY",  emoji: "🐌", color: "#C9A15A", msg: "Bilek uyanık ama beyin kahve bekliyor." },
-  { max: 1300,     name: "SLEEP MODE",   emoji: "💤", color: "#7C86A0", msg: "Ok epey bekledi seni." },
-  { max: Infinity, name: "OFFLINE",      emoji: "🔌", color: "#5A6172", msg: "Bağlantı koptu. Yeniden dene." },
-];
-const tiersOf = (test) => test === "tap" ? TIERS_TAP : TIERS_TILT;
-const tierFor = (test, ms) => tiersOf(test).find(t => ms < t.max);
-const median = (arr) => { const s=[...arr].sort((a,b)=>a-b); const m=Math.floor(s.length/2); return s.length%2 ? s[m] : Math.round((s[m-1]+s[m])/2); };
-
-const PCT = {
-  tap:  [[180,99.7],[200,99],[230,96],[250,92],[280,83],[300,74],[330,62],[360,52],[400,39],[450,26],[500,17],[600,7],[750,2],[1000,0.5]],
-  tilt: [[280,99.5],[320,97],[375,90],[420,78],[470,64],[520,52],[575,40],[650,26],[750,14],[900,6],[1100,2],[1300,0.8]],
-};
-function percentileFaster(test, ms) {
-  const pts = PCT[test];
-  if (ms <= pts[0][0]) return pts[0][1];
-  for (let i=1;i<pts.length;i++){ if(ms<=pts[i][0]){ const[a,b]=pts[i-1],[c,d]=pts[i]; return b+(d-b)*(ms-a)/(c-a);} }
-  return 0.3;
-}
-
-// FIX (i18n): "Refleksi".toUpperCase() → "REFLEKSI" (noktalı İ kayboluyordu).
-const upperTR = (s) => String(s).toLocaleUpperCase("tr-TR");
-
-// FIX: eksenler artık cihaz değil EKRAN uzayında (x = sol/sağ, y = ileri/geri).
-// beta/gamma cihaza sabittir; telefon yan çevrilince "SOLA" yanlış eksene düşerdi.
-const DIRS = {
-  left:  { arrow:"◀", label:"SOLA",   axis:"x", sign:-1 },
-  right: { arrow:"▶", label:"SAĞA",   axis:"x", sign: 1 },
-  up:    { arrow:"▲", label:"İLERİ",  axis:"y", sign:-1 },
-  down:  { arrow:"▼", label:"GERİYE", axis:"y", sign: 1 },
-};
-const DIR_KEYS = Object.keys(DIRS);
-const TILT_THRESHOLD = 16;      // "go" sonrası geçerli sayılan eğim
-const TILT_FALSE_START = 30;    // "bekle" fazında bu kadar eğilmek = erken hareket
-const OFFICIAL_N = 5;
-
-// FIX: alt ve üst sınır yoktu.
-// MIN_MS: uyarandan önce başlatılmış hareket. 100 ms'nin altı insan tepkisi değil,
-// tahmindir (Luce, 1986 — basit tepki süresi tabanı ~100-120 ms).
-// MAX_MS: cevap gelmezse deneme "kaçırıldı" sayılır; yoksa 40 saniyelik bir
-// gecikme geçerli ölçüm gibi medyana giriyordu.
-const MIN_MS = 100;
-const MAX_MS = { tap: 2000, tilt: 3000 };
-
-const TEST_NAMES = { tap: "Dokunma Refleksi", tilt: "Yön Refleksi" };
-const TEST_ICONS = { tap: "👆", tilt: "🧭" };
-
-// FIX (gizlilik): Google Fonts @import kaldırıldı. Sayfa açılır açılmaz
-// kullanıcının IP'si ve User-Agent'ı Google'a gidiyordu — bu, uygulamanın kendi
-// "hiçbir yere gönderilmez" metniyle çelişiyordu (ve AB'de dava konusu olmuş bir
-// kalıptır). Yan fayda: sistem fontları her zaman hazır olduğu için sertifika
-// canvas'ı da artık yanlış fontla çizilmiyor.
-//
-// Orijinal görünümü geri istersen: Bricolage Grotesque + Space Mono dosyalarını
-// indir, /fonts altına koy ve aşağıdaki @font-face bloğunu <style>'a ekle:
-//   @font-face{font-family:'Bricolage Grotesque';src:url('/fonts/bricolage.woff2') format('woff2');font-display:swap}
-//   @font-face{font-family:'Space Mono';src:url('/fonts/space-mono.woff2') format('woff2');font-display:swap}
-// Sonra aşağıdaki iki listenin başına o aileleri ekle.
-const FONT_DISPLAY = "'Bricolage Grotesque', 'Segoe UI', system-ui, -apple-system, sans-serif";
-const FONT_MONO = "'Space Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
-
-// FIX: açı farkını [-180, 180] aralığına sarar.
-// Öncesinde baseline 170° iken -175°'ye eğilmek +15 yerine -345 üretiyordu.
-const normAngle = (d) => ((d + 540) % 360) - 180;
-
-// FIX: cihaz eksenlerini ekran eksenlerine çevirir.
-// screen.orientation.angle içeriğin doğal yöne göre dönüşüdür.
-const screenAngle = () => {
-  const so = window.screen && window.screen.orientation;
-  if (so && typeof so.angle === "number") return so.angle;
-  if (typeof window.orientation === "number") return (window.orientation + 360) % 360;
-  return 0;
-};
-const toScreenAxes = (beta, gamma) => {
-  switch (screenAngle()) {
-    case 90:  return { x: -beta,  y:  gamma };
-    case 180: return { x: -gamma, y: -beta  };
-    case 270: return { x:  beta,  y: -gamma };
-    default:  return { x:  gamma, y:  beta  };
+  function openModal(e){
+    if(e) e.preventDefault();
+    times=[]; clearTimeout(timerId);
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    showIdle();
   }
-};
-
-// =============== ROBOT ===============
-function RobotFace({ mood, color }) {
-  const eyes = {
-    idle:   React.createElement(React.Fragment, null, React.createElement('rect', { x: "28", y: "38", width: "14", height: "14", rx: "4", fill: color,}), React.createElement('rect', { x: "58", y: "38", width: "14", height: "14", rx: "4", fill: color,})),
-    armed:  React.createElement(React.Fragment, null, React.createElement('rect', { x: "28", y: "42", width: "14", height: "6", rx: "3", fill: color,}), React.createElement('rect', { x: "58", y: "42", width: "14", height: "6", rx: "3", fill: color,})),
-    go:     React.createElement(React.Fragment, null, React.createElement('circle', { cx: "35", cy: "45", r: "9", fill: color,}), React.createElement('circle', { cx: "65", cy: "45", r: "9", fill: color,})),
-    happy:  React.createElement(React.Fragment, null, React.createElement('path', { d: "M28 48 q7-12 14 0"    , stroke: color, strokeWidth: "5", fill: "none", strokeLinecap: "round",}), React.createElement('path', { d: "M58 48 q7-12 14 0"    , stroke: color, strokeWidth: "5", fill: "none", strokeLinecap: "round",})),
-    dizzy:  React.createElement(React.Fragment, null, React.createElement('text', { x: "27", y: "52", fontSize: "18", fill: color,}, "×"), React.createElement('text', { x: "57", y: "52", fontSize: "18", fill: color,}, "×")),
-    sleepy: React.createElement(React.Fragment, null, React.createElement('rect', { x: "28", y: "46", width: "14", height: "4", rx: "2", fill: color,}), React.createElement('rect', { x: "58", y: "46", width: "14", height: "4", rx: "2", fill: color,})),
-    error:  React.createElement(React.Fragment, null, React.createElement('rect', { x: "28", y: "40", width: "14", height: "10", rx: "2", fill: color, transform: "rotate(12 35 45)"  ,}), React.createElement('rect', { x: "58", y: "40", width: "14", height: "10", rx: "2", fill: color, transform: "rotate(-12 65 45)"  ,})),
-  };
-  const mouth = {
-    idle:   React.createElement('rect', { x: "40", y: "62", width: "20", height: "5", rx: "2.5", fill: color, opacity: "0.7",}),
-    armed:  React.createElement('rect', { x: "42", y: "63", width: "16", height: "4", rx: "2", fill: color, opacity: "0.7",}),
-    go:     React.createElement('circle', { cx: "50", cy: "66", r: "6", fill: color, opacity: "0.8",}),
-    happy:  React.createElement('path', { d: "M38 62 q12 12 24 0"     , stroke: color, strokeWidth: "5", fill: "none", strokeLinecap: "round",}),
-    dizzy:  React.createElement('path', { d: "M38 68 q6-6 12 0 q6 6 12 0"        , stroke: color, strokeWidth: "4", fill: "none", strokeLinecap: "round",}),
-    sleepy: React.createElement('ellipse', { cx: "50", cy: "66", rx: "5", ry: "7", fill: color, opacity: "0.6",}),
-    error:  React.createElement('path', { d: "M38 68 q12-10 24 0"    , stroke: color, strokeWidth: "5", fill: "none", strokeLinecap: "round",}),
-  };
-  return (
-    React.createElement('svg', { viewBox: "0 0 100 100"   , style: { width:"100%", height:"100%" },}
-      , React.createElement('rect', { x: "12", y: "20", width: "76", height: "62", rx: "16", fill: "none", stroke: color, strokeWidth: "4",})
-      , React.createElement('line', { x1: "50", y1: "8", x2: "50", y2: "20", stroke: color, strokeWidth: "4", strokeLinecap: "round",})
-      , React.createElement('circle', { cx: "50", cy: "7", r: "4", fill: color,})
-      , React.createElement('rect', { x: "2", y: "42", width: "8", height: "18", rx: "4", fill: color, opacity: "0.6",})
-      , React.createElement('rect', { x: "90", y: "42", width: "8", height: "18", rx: "4", fill: color, opacity: "0.6",})
-      /* FIX: eyes korumasızdı, mouth korumalıydı — ikisi de artık idle'a düşüyor. */
-      , eyes[eyes[mood] ? mood : "idle"], mouth[mouth[mood] ? mood : "idle"]
-    )
-  );
-}
-
-const blankTestState = () => ({ history: [], best: null, official: [], wrong: 0, cert: null });
-
-function Reacto() {
-  const savedProfile = loadProfile();
-  const profileComplete = (p) => p && p.consent && p.ageRange && p.team;
-  const [profile, setProfile] = useState(savedProfile);
-  const [screen, setScreen] = useState(profileComplete(savedProfile) ? "gate" : "onboard");
-  const [obStep, setObStep] = useState("consent"); // consent | profile
-  const [selAge, setSelAge] = useState(_optionalChain([savedProfile, 'optionalAccess', _2 => _2.ageRange]) || null);
-  const [selTeam, setSelTeam] = useState(_optionalChain([savedProfile, 'optionalAccess', _3 => _3.team]) || null);
-  const [checked, setChecked] = useState(false);
-  const [sensorState, setSensorState] = useState("idle"); // idle|requesting|granted|denied|nodata
-  const [simMode, setSimMode] = useState(false);
-  const [tiltNow, setTiltNow] = useState({ beta:0, gamma:0 });
-
-  const [test, setTest] = useState("tap");   // tap | tilt
-  const [mode, setMode] = useState("free");  // free | official
-  const [phase, setPhase] = useState("idle");// idle|armed|go|result|early|wrong|certificate
-  const [target, setTarget] = useState(null);
-  const [result, setResult] = useState(null);
-  const [stats, setStats] = useState({ tap: blankTestState(), tilt: blankTestState() });
-  const [shareMsg, setShareMsg] = useState("");
-
-  const timerRef = useRef(null);
-  const missTimerRef = useRef(null);   // FIX: "go" için üst süre sınırı
-  const sensorTimerRef = useRef(null); // FIX: enableSensor'daki 1200 ms sözde-timeout
-  const goTimeRef = useRef(0);
-  const baselineRef = useRef({ x:0, y:0 });
-  const latestRef = useRef({ x:0, y:0 });
-  const dragStartRef = useRef(null);
-  // FIX: tur kilidi. deviceorientation ~60 Hz tetikleniyor ve React state'i
-  // senkron flush etmediği için aynı deneme birden çok kez kaydedilebiliyordu
-  // (official dizisi 5'i aşıyor, median çift dala düşüyordu). Bu bayrak senkron.
-  const lockRef = useRef(false);
-  const certBlobRef = useRef(null);    // FIX: Safari'de paylaşım jesti için önceden üretilen PNG
-  const ref = useRef({});
-  ref.current = { phase, target, test, mode, stats, simMode, profile };
-
-  const clearTimers = useCallback(() => {
-    clearTimeout(timerRef.current);
-    clearTimeout(missTimerRef.current);
-  }, []);
-
-  // FIX: sensör dinleyicisi hiç kaldırılmıyordu, 1200 ms'lik timeout unmount'ta
-  // temizlenmiyordu (unmounted component'e setState).
-  useEffect(() => () => {
-    clearTimeout(timerRef.current);
-    clearTimeout(missTimerRef.current);
-    clearTimeout(sensorTimerRef.current);
-    window.removeEventListener("deviceorientation", onOrientation);
-  }, []);
-
-  const S = stats[test];
-  const patch = (t, updates) => setStats(s => ({ ...s, [t]: { ...s[t], ...updates } }));
-  // Seçilen alanın rengi uygulamanın tek vurgu rengi olur; takım seçilmemişse
-  // nötr mora düşer (onboarding sırasında henüz takım yoktur).
-  const myTeam = profile && profile.team ? teamOf(profile.team) : null;
-  const accent = myTeam ? myTeam.color : "#8EA3FF";
-
-  // ---- Sensör ----
-  const lastUiTiltRef = useRef(0);
-  const onOrientation = useCallback((e) => {
-    if (e.beta === null || e.gamma === null) return;
-    onOrientation.seen = true;
-
-    // FIX: ham beta/gamma yerine ekran uzayına çevrilmiş eksenler.
-    const now = toScreenAxes(e.beta, e.gamma);
-    latestRef.current = now;
-
-    const { phase, target, test } = ref.current;
-
-    // FIX: setTiltNow saniyede ~60 kez TÜM bileşeni yeniden render ediyordu.
-    // Bu hem pil hem de ölçüm jitter'ı demekti. Canlı gösterge yalnızca izin
-    // ekranında lazım; orada da 10 Hz yeterli.
-    const t = performance.now();
-    if (t - lastUiTiltRef.current > 100) {
-      lastUiTiltRef.current = t;
-      setTiltNow({ beta: e.beta, gamma: e.gamma });
-    }
-
-    if (test !== "tilt") return;
-    const base = baselineRef.current;
-    // FIX: fark artık [-180,180] aralığına sarılıyor (170° → -175° sorunu).
-    const d = { x: normAngle(now.x - base.x), y: normAngle(now.y - base.y) };
-
-    // FIX: yön testinde erken hareket tespiti yoktu — kullanıcı ok çıkmadan
-    // telefonu eğip bekleyebiliyordu.
-    if (phase === "armed") {
-      if (Math.abs(d.x) > TILT_FALSE_START || Math.abs(d.y) > TILT_FALSE_START) {
-        if (lockRef.current) return;
-        lockRef.current = true;
-        clearTimeout(timerRef.current);
-        setPhase("early");
-      }
-      return;
-    }
-
-    if (phase !== "go" || !target) return;
-    if (lockRef.current) return; // FIX: tur başına tek kayıt
-    for (const key of DIR_KEYS) {
-      const dir = DIRS[key];
-      if (d[dir.axis] * dir.sign > TILT_THRESHOLD) { registerTilt(key); return; }
-    }
-  }, []);
-
-  const enableSensor = async () => {
-    setSensorState("requesting");
-    try {
-      if (typeof DeviceOrientationEvent !== "undefined" &&
-          typeof DeviceOrientationEvent.requestPermission === "function") {
-        const res = await DeviceOrientationEvent.requestPermission();
-        if (res !== "granted") { setSensorState("denied"); return; }
-      }
-      onOrientation.seen = false;
-      window.addEventListener("deviceorientation", onOrientation);
-      // FIX: timeout artık iptal edilebilir (unmount'ta setState uyarısı vermiyor).
-      clearTimeout(sensorTimerRef.current);
-      sensorTimerRef.current = setTimeout(
-        () => setSensorState(onOrientation.seen ? "granted" : "nodata"), 1200);
-    } catch (e6) { setSensorState("denied"); }
-  };
-
-  // ---- Ortak akış ----
-  const arm = useCallback(() => {
-    clearTimeout(timerRef.current);   // FIX: bekleyen bir timer varsa iki timer birden çalışıyordu
-    clearTimeout(missTimerRef.current);
-    lockRef.current = false;          // FIX: yeni tur, kilit açılır
-    setPhase("armed"); setResult(null); setTarget(null); setShareMsg("");
-
-    // FIX: yön testinde "bekle" fazı için de bir referans duruş gerekiyor,
-    // yoksa erken hareketi ölçecek bir taban yok.
-    baselineRef.current = { ...latestRef.current };
-
-    const delay = 1300 + Math.random() * 2400;
-    timerRef.current = setTimeout(() => {
-      if (lockRef.current) return; // erken hareket/dokunma olduysa "go"ya geçme
-      if (ref.current.test === "tilt") {
-        baselineRef.current = { ...latestRef.current };
-        setTarget(DIR_KEYS[Math.floor(Math.random() * DIR_KEYS.length)]);
-      }
-      setPhase("go");
-
-      // FIX (ölçüm doğruluğu): goTime, setPhase ile aynı anda alınıyordu; oysa
-      // yeşil ekran en az bir kare SONRA boyanıyor. Tüm süreler ~16-50 ms
-      // şişkindi. Çift rAF ile boyama tamamlandıktan sonra damgalıyoruz.
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        goTimeRef.current = performance.now();
-        // FIX: cevap gelmezse deneme kaçırılmış sayılır.
-        clearTimeout(missTimerRef.current);
-        missTimerRef.current = setTimeout(() => {
-          if (lockRef.current) return;
-          lockRef.current = true;
-          setPhase("miss");
-        }, MAX_MS[ref.current.test] || 2500);
-      }));
-    }, delay);
-  }, []);
-
-  const recordSuccess = (ms) => {
-    const { test, mode, stats, simMode } = ref.current;
-    clearTimeout(missTimerRef.current);
-    const st = stats[test];
-
-    // FIX: savunma amaçlı — resmi test zaten dolduysa fazladan deneme ekleme.
-    if (mode === "official" && st.official.length >= OFFICIAL_N) return;
-
-    const newHist = [...st.history.slice(-9), ms];
-    const newBest = st.best === null || ms < st.best ? ms : st.best;
-    if (mode === "official") {
-      const next = [...st.official, ms];
-      if (next.length >= OFFICIAL_N) {
-        const med = median(next);
-        const isSim = simMode && test === "tilt";
-        patch(test, { history: newHist, best: newBest, official: next,
-          cert: { median: med, tier: tierFor(test, med), pct: percentileFaster(test, med), attempts: next, sim: isSim } });
-        setResult(ms); setPhase("certificate");
-        // FIX: simülasyon sonuçları gerçek sensör ölçümüyle aynı havuza
-        // karışmasın diye işaretleniyor.
-        sendStats(ref.current.profile, { test, medianMs: med, attempts: next, wrong: st.wrong, sim: isSim });
-        return;
-      }
-      patch(test, { history: newHist, best: newBest, official: next });
-    } else {
-      patch(test, { history: newHist, best: newBest });
-    }
-    setResult(ms); setPhase("result");
-  };
-
-  const registerTilt = (movedKey) => {
-    if (lockRef.current) return;
-    lockRef.current = true;            // FIX: senkron kilit, çift sayımı engeller
-    clearTimeout(missTimerRef.current);
-    const ms = Math.round(performance.now() - goTimeRef.current);
-
-    // FIX: alt sınır kontrolü yoktu — ok çıkar çıkmaz hazırda bekleyen bir
-    // hareket 12 ms'lik "sonuç" üretebiliyordu.
-    if (ms < MIN_MS) { setPhase("early"); return; }
-
-    if (movedKey === ref.current.target) recordSuccess(ms);
-    else {
-      const t = ref.current.test;
-      // FIX: ref'ten okunan değer yerine fonksiyonel güncelleme — art arda
-      // gelen olaylarda artışlar kaybolmuyor.
-      setStats(s => ({ ...s, [t]: { ...s[t], wrong: s[t].wrong + 1 } }));
-      setPhase("wrong");
-    }
-  };
-
-  const handlePad = () => {
-    const p = ref.current.phase;
-    if (p === "certificate") return;
-    if (p === "idle" || p === "result" || p === "early" || p === "wrong" || p === "miss") { arm(); return; }
-    if (p === "armed") {
-      // FIX: yön testinde de "bekle" sırasındaki dokunuş turu iptal etmeli,
-      // yoksa timer arkada çalışmaya devam ediyordu.
-      if (lockRef.current) return;
-      lockRef.current = true;
-      clearTimeout(timerRef.current);
-      setPhase("early");
-      return;
-    }
-    if (p === "go" && ref.current.test === "tap") {
-      if (lockRef.current) return;
-      lockRef.current = true;          // FIX: hızlı çift dokunuş iki kayıt yapıyordu
-      clearTimeout(missTimerRef.current);
-      const ms = Math.round(performance.now() - goTimeRef.current);
-      // FIX: ekranda "100 ms altı imkânsızdır" yazıyordu ama kodda kontrol yoktu.
-      if (ms < MIN_MS) { setPhase("early"); return; }
-      recordSuccess(ms);
-    }
-    // tilt testinde "go" sırasında dokunmak bir şey yapmaz — hareket bekleriz
-  };
-
-  // Sim modu (tilt): sürükleme = eğme
-  const onSimStart = (e) => { dragStartRef.current = { x: e.clientX, y: e.clientY }; };
-  const onSimMove = (e) => {
-    if (!ref.current.simMode || ref.current.test !== "tilt") return;
-    if (!dragStartRef.current || ref.current.phase !== "go") return;
-    const dx = e.clientX - dragStartRef.current.x, dy = e.clientY - dragStartRef.current.y;
-    if (Math.abs(dx) < 60 && Math.abs(dy) < 60) return;
-    const key = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
-    dragStartRef.current = null;
-    registerTilt(key);
-  };
-  const onSimEnd = () => { dragStartRef.current = null; };
-
-  // FIX: startOfficial/exitOfficial bekleyen timer'ı temizlemiyordu. Kullanıcı
-  // "Bekle..." fazındayken bu düğmelere basınca eski setTimeout çalışmaya devam
-  // ediyor, saniyeler sonra ekran kendiliğinden "DOKUN!"a atlıyor ve goTime
-  // yanlış anda damgalanıyordu.
-  const resetRound = () => {
-    clearTimers();
-    lockRef.current = false;
-    certBlobRef.current = null;
-    setPhase("idle"); setResult(null); setTarget(null); setShareMsg("");
-  };
-  const switchTest = (t) => {
-    resetRound();
-    setTest(t);
-    // FIX: wrong sayacı testler arasında taşınıyordu.
-    if (mode === "official") patch(t, { official: [], cert: null, wrong: 0 });
-  };
-  const startOfficial = () => { resetRound(); patch(test, { official: [], cert: null, wrong: 0 }); setMode("official"); };
-  const exitOfficial  = () => { resetRound(); setMode("free"); };
-
-  // Sertifikayı 1080x1920 (story boyutu) PNG'ye çizer
-  // FIX: canvas web fontları BEKLEMEZ. Font hazır değilse sessizce sans-serif'e
-  // düşüyor ve elle ayarlanmış konumlar kayıyordu. Artık çizim öncesi bekleniyor.
-  const drawCertImage = async (cert, myTeam) => {
-    try {
-      if (document.fonts && document.fonts.ready) await document.fonts.ready;
-    } catch (eF) {}
-    const W = 1080, H = 1920;
-    const cv = document.createElement("canvas");
-    cv.width = W; cv.height = H;
-    const g = cv.getContext("2d");
-    const C = cert.tier.color;
-
-    // Arka plan
-    const bg = g.createLinearGradient(0, 0, W, H);
-    bg.addColorStop(0, "#232A52"); bg.addColorStop(1, "#0D1024");
-    g.fillStyle = bg; g.fillRect(0, 0, W, H);
-
-    // Çerçeve
-    g.strokeStyle = C; g.lineWidth = 10;
-    const r = 60, m = 50;
-    g.beginPath();
-    g.roundRect ? g.roundRect(m, m, W - 2*m, H - 2*m, r) : g.rect(m, m, W - 2*m, H - 2*m);
-    g.stroke();
-
-    g.textAlign = "center";
-
-    // Başlık
-    // FIX: "W/2 - 46" ve "+ w1/2 + 34" gibi elle ayarlanmış sihirli sayılar,
-    // font değişince logoyu kaydırıyordu. Artık gerçek genişlik ölçülüp
-    // iki parça sola hizalı çiziliyor.
-    g.font = "800 92px " + FONT_DISPLAY;
-    g.textAlign = "left";
-    const wReact = g.measureText("REACT").width;
-    const wO = g.measureText("O").width;
-    const titleX = (W - (wReact + wO)) / 2;
-    g.fillStyle = "#EDEFFB"; g.fillText("REACT", titleX, 260);
-    g.fillStyle = "#8EA3FF"; g.fillText("O", titleX + wReact, 260);
-    g.textAlign = "center";
-
-    g.fillStyle = "#8EA3FF";
-    g.font = "700 34px " + FONT_MONO;
-    // FIX: toUpperCase() Türkçe'de "REFLEKSI" üretiyordu.
-    g.fillText(`${upperTR(TEST_NAMES[test])} — RESMİ SONUÇ`, W/2, 340);
-
-    // Robot yüzü (basitleştirilmiş)
-    const rx = W/2, ry = 620, s = 2.6;
-    g.strokeStyle = C; g.lineWidth = 12; g.lineCap = "round";
-    g.beginPath();
-    g.roundRect ? g.roundRect(rx - 38*s, ry - 31*s, 76*s, 62*s, 16*s) : g.rect(rx - 38*s, ry - 31*s, 76*s, 62*s);
-    g.stroke();
-    g.beginPath(); g.moveTo(rx, ry - 31*s); g.lineTo(rx, ry - 43*s); g.stroke();
-    g.fillStyle = C;
-    g.beginPath(); g.arc(rx, ry - 44*s, 5*s, 0, Math.PI * 2); g.fill(); // FIX: 7 radyan → 2π
-    // kulaklar
-    g.globalAlpha = .6;
-    g.fillRect(rx - 48*s, ry - 9*s, 8*s, 18*s);
-    g.fillRect(rx + 40*s, ry - 9*s, 8*s, 18*s);
-    g.globalAlpha = 1;
-    const fast = cert.median < (test === "tap" ? 400 : 575);
-    if (fast) {
-      // mutlu gözler + gülümseme
-      g.strokeStyle = C; g.lineWidth = 5*s;
-      g.beginPath(); g.arc(rx - 15*s, ry - 2*s, 7*s, Math.PI, 2*Math.PI); g.stroke();
-      g.beginPath(); g.arc(rx + 15*s, ry - 2*s, 7*s, Math.PI, 2*Math.PI); g.stroke();
-      g.beginPath(); g.arc(rx, ry + 12*s, 12*s, 0.15*Math.PI, 0.85*Math.PI); g.stroke();
-    } else {
-      g.fillStyle = C;
-      g.fillRect(rx - 22*s, ry - 7*s, 14*s, 14*s);
-      g.fillRect(rx + 8*s,  ry - 7*s, 14*s, 14*s);
-      g.globalAlpha = .7; g.fillRect(rx - 10*s, ry + 12*s, 20*s, 5*s); g.globalAlpha = 1;
-    }
-
-    // Medyan
-    // FIX: "ms" etiketi 60px font aktifken 190px'lik sayıyı ölçüp *1.55 gibi bir
-    // katsayıyla çarpılıyordu; 3 ve 4 haneli medyanlarda konum kayıyordu.
-    // Artık her parça kendi fontuyla ölçülüp blok ortalanıyor.
-    const numTxt = String(cert.median);
-    g.font = "700 190px " + FONT_MONO;
-    const numW = g.measureText(numTxt).width;
-    g.font = "700 60px " + FONT_MONO;
-    const msW = g.measureText("ms").width;
-    const gapW = 22;
-    const blockX = (W - (numW + gapW + msW)) / 2;
-    g.textAlign = "left";
-    g.fillStyle = C;
-    g.font = "700 190px " + FONT_MONO;
-    g.fillText(numTxt, blockX, 1080);
-    g.font = "700 60px " + FONT_MONO;
-    g.globalAlpha = .7; g.fillText("ms", blockX + numW + gapW, 1080); g.globalAlpha = 1;
-    g.textAlign = "center";
-
-    g.fillStyle = "#9AA3C8";
-    g.font = "400 34px " + FONT_MONO;
-    g.fillText(`${OFFICIAL_N} denemenin medyanı`, W/2, 1140);
-
-    // Seviye rozeti
-    g.font = "800 64px " + FONT_DISPLAY;
-    const badge = `${cert.tier.emoji} ${cert.tier.name}`;
-    const bw = g.measureText(badge).width + 120;
-    g.strokeStyle = C; g.lineWidth = 6;
-    g.beginPath();
-    g.roundRect ? g.roundRect(W/2 - bw/2, 1210, bw, 120, 60) : g.rect(W/2 - bw/2, 1210, bw, 120);
-    g.stroke();
-    g.fillStyle = C;
-    g.fillText(badge, W/2, 1292);
-
-    // Yüzdelik
-    // FIX: uydurma bir tablodan gelen değer kesin bir olgu gibi yazılıyordu.
-    g.fillStyle = "#8EA3FF";
-    g.font = "700 44px " + FONT_MONO;
-    const p = cert.pct < 1 ? cert.pct.toFixed(1) : Math.round(cert.pct);
-    g.fillText(`Tahminen insanların %${p}'inden hızlı`, W/2, 1440);
-
-    // Denemeler
-    g.fillStyle = "#9AA3C8";
-    g.font = "400 36px " + FONT_MONO;
-    g.fillText(cert.attempts.join("  ·  ") + "  ms", W/2, 1530);
-
-    // FIX: simülasyonla alınan sonuç sertifikada da açıkça işaretleniyor.
-    if (cert.sim) {
-      g.fillStyle = "#FFE14D";
-      g.font = "400 30px " + FONT_MONO;
-      g.fillText("simülasyon modu — sensörle ölçülmedi", W/2, 1580);
-    }
-
-    // Takım (alan)
-    if (myTeam) {
-      g.fillStyle = myTeam.color;
-      g.font = "700 44px " + FONT_MONO;
-      g.fillText(`${myTeam.emoji}  ${myTeam.name}`, W/2, 1655);
-      g.fillStyle = "#9AA3C8";
-      g.font = "400 30px " + FONT_MONO;
-      g.fillText(myTeam.desc, W/2, 1705);
-    }
-
-    g.fillStyle = "#5A6172";
-    g.font = "400 30px " + FONT_MONO;
-    g.fillText("reacto — refleks testi", W/2, 1780);
-    g.font = "400 26px " + FONT_MONO;
-    g.fillText("eğlence amaçlıdır, tıbbi ölçüm değildir", W/2, 1830);
-
-    return new Promise(res => cv.toBlob(res, "image/png"));
-  };
-
-  // FIX (Safari): shareCert içinde toBlob beklendiği için navigator.share
-  // kullanıcı jestinden kopuyor ve NotAllowedError alınabiliyordu. Sertifika
-  // ekranı açılır açılmaz PNG'yi arka planda üretip hazırda tutuyoruz; böylece
-  // paylaş düğmesi await'siz çalışabiliyor.
-  useEffect(() => {
-    if (phase !== "certificate" || !S.cert) { return; }
-    let alive = true;
-    certBlobRef.current = null;
-    drawCertImage(S.cert, teamOf(_optionalChain([profile, 'optionalAccess', _9 => _9.team])))
-      .then(b => { if (alive) certBlobRef.current = b; })
-      .catch(() => {});
-    return () => { alive = false; };
-  }, [phase, S.cert]);
-
-  const shareCert = async () => {
-    const cert = S.cert; if (!cert) return;
-    const myTeam = teamOf(_optionalChain([profile, 'optionalAccess', _4 => _4.team]));
-    const text = `${TEST_ICONS[test]} REACTO — ${TEST_NAMES[test]} Resmi Sonucum${myTeam ? `\n${myTeam.emoji} ${myTeam.name} — ${myTeam.desc}` : ""}\n${cert.tier.emoji} ${cert.tier.name} — medyan ${cert.median} ms\nTahminen insanların %${cert.pct < 1 ? cert.pct.toFixed(1) : Math.round(cert.pct)}'inden hızlıyım!\nDenemeler: ${cert.attempts.join(", ")} ms${test==="tilt" && S.wrong ? `\nYanlış yön: ${S.wrong}` : ""}`;
-
-    // 1) Görsel olarak paylaşmayı dene (Instagram vb. yalnızca dosya kabul eder)
-    try {
-      // FIX: hazırsa önceden üretilmiş blob kullanılır (jest korunur).
-      const blob = certBlobRef.current || await drawCertImage(cert, myTeam);
-      if (blob) {
-        const file = new File([blob], "reacto-sonuc.png", { type: "image/png" });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], text });
-          setShareMsg("Paylaşıldı");
-          return;
-        }
-        // Dosya paylaşımı yoksa: görseli indir + metni panoya kopyala
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url; a.download = "reacto-sonuc.png";
-        a.rel = "noopener";
-        a.click();
-        setTimeout(() => URL.revokeObjectURL(url), 8000);
-        try { await navigator.clipboard.writeText(text); } catch (e7) {}
-        // FIX: iOS Safari download attribute'unu yok sayıp görseli yeni sekmede
-        // açar; "indirildi" demek yanıltıcıydı.
-        setShareMsg("Görsel açıldı — kaydetmek için üstüne basılı tut. Metin panoda.");
-        return;
-      }
-    } catch (e) {
-      if (e && e.name === "AbortError") { setShareMsg(""); return; } // kullanıcı vazgeçti
-    }
-
-    // 2) Yedek: metin paylaşımı
-    try {
-      if (navigator.share) { await navigator.share({ text }); setShareMsg("Paylaşıldı"); }
-      else { await navigator.clipboard.writeText(text); setShareMsg("Panoya kopyalandı ✓"); }
-    } catch (e) {
-      if (e && e.name === "AbortError") { setShareMsg(""); return; }
-      try { await navigator.clipboard.writeText(text); setShareMsg("Panoya kopyalandı ✓"); }
-      catch (e8) { setShareMsg("Paylaşım desteklenmiyor"); }
-    }
-  };
-
-  const TIERS = tiersOf(test);
-  const tier = result !== null ? tierFor(test, result) : null;
-  const avg = S.history.length ? Math.round(S.history.reduce((a,b)=>a+b,0)/S.history.length) : null;
-  const pct = result !== null ? percentileFaster(test, result) : null;
-  const cert = S.cert;
-
-  const mood =
-    phase === "armed" ? "armed" :
-    phase === "go" ? "go" :
-    phase === "miss" ? "sleepy" :
-    phase === "early" || phase === "wrong" ? "error" :
-    phase === "certificate" && cert ? (cert.tier.max <= (test==="tap"?400:575) ? "happy" : cert.median < (test==="tap"?1000:1300) ? "idle" : "dizzy") :
-    tier ? (result < (test==="tap"?300:450) ? "happy" : result < (test==="tap"?650:900) ? "idle" : result < (test==="tap"?1000:1300) ? "sleepy" : "dizzy") :
-    "idle";
-  const faceColor =
-    phase === "armed" || phase === "early" || phase === "wrong" ? "#FF5D5D" :
-    phase === "miss" ? "#C9A15A" :
-    phase === "go" ? "#30E67A" :
-    accent;
-
-  // FIX: minHeight artık .shell sınıfında (100vh → 100dvh fallback'li).
-  const shell = {
-    background:"#0D1024", color:"#EDEFFB",
-    fontFamily:FONT_DISPLAY,
-    display:"flex", flexDirection:"column", alignItems:"center", padding:"20px 16px 32px",
-  };
-  const css = (
-    React.createElement('style', null, `
-      /* FIX: Google Fonts @import kaldırıldı — üçüncü taraf istek + IP sızıntısı. */
-      @keyframes pulseGo { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
-      @keyframes blinkArm { 0%,100%{opacity:1} 50%{opacity:.55} }
-      @keyframes popIn { from{transform:scale(.8);opacity:0} to{transform:scale(1);opacity:1} }
-      @keyframes certGlow { 0%,100%{box-shadow:0 0 24px -6px var(--glow)} 50%{box-shadow:0 0 44px -4px var(--glow)} }
-      @keyframes riseIn { from{transform:translateY(14px);opacity:0} to{transform:translateY(0);opacity:1} }
-      @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
-      .pad:active { transform: scale(.99); }
-      .btn { cursor:pointer; border:none; font-family:${FONT_DISPLAY}; font-weight:700; border-radius:12px; padding:10px 16px; font-size:14px; transition: transform .08s, opacity .15s; }
-      .btn:active { transform: scale(.96); }
-      .btn:disabled { opacity:.4; cursor:not-allowed; }
-      /* FIX: pad'de outline:none vardı — klavye kullanıcısı odağı göremiyordu. */
-      .pad:focus-visible, .btn:focus-visible, .linkbtn:focus-visible {
-        outline:3px solid #8EA3FF; outline-offset:3px;
-      }
-      .linkbtn { background:none; border:none; padding:0; font:inherit; color:#8EA3FF;
-        text-decoration:underline; cursor:pointer; }
-      /* Ekran okuyucular için görünmez canlı bölge */
-      .sronly { position:absolute; width:1px; height:1px; padding:0; margin:-1px;
-        overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
-    `)
-  );
-  const header = (
-    React.createElement('div', { style: { display:"flex", alignItems:"center", gap:10, marginBottom:12 },}
-      , React.createElement('div', { style: { width:34, height:34 },}, React.createElement(RobotFace, { mood: "idle", color: accent,}))
-      , React.createElement('div', { style: { fontWeight:800, fontSize:26, letterSpacing:"0.5px" },}, "REACT"
-        , React.createElement('span', { style: { color:accent },}, "O")
-      )
-      , screen==="app" && myTeam && (
-        React.createElement('div', { style: {
-          fontFamily:FONT_MONO, fontSize:11, letterSpacing:1,
-          color: myTeam.color, border:`1px solid ${myTeam.color}55`,
-          borderRadius:999, padding:"4px 10px",
-          display:"flex", alignItems:"center", gap:6,
-        },}
-          , React.createElement('span', { style: { width:7, height:7, borderRadius:"50%", background:myTeam.color, display:"inline-block", flexShrink:0 },})
-          , myTeam.name
-        )
-      )
-    )
-  );
-
-  // ================= ONBOARDING (ONAY + PROFİL) =================
-  if (screen === "onboard") {
-    const card = {
-      width:"100%", maxWidth:420, background:"linear-gradient(160deg,#232A52,#181C3A)",
-      border:"3px solid #3A437C", borderRadius:28, padding:"28px 22px",
-      display:"flex", flexDirection:"column", gap:16, animation:"riseIn .4s ease-out",
-    };
-    if (obStep === "consent") {
-      return (
-        React.createElement('div', { className: "shell", style: shell,}
-          , css, header
-          , React.createElement('div', { style: card,}
-            , React.createElement('div', { style: { fontSize:20, fontWeight:800 },}, "Verilerin hakkında" )
-            , React.createElement('div', { style: { fontSize:14, opacity:.85, lineHeight:1.55 },}, "Reacto "
-               , React.createElement('b', null, "kimlik bilgisi toplamaz"  ), ". İsim, e-posta veya hesap yok. Reklam ve takip çerezi de yok."
-            )
-            /* FIX (KVKK): "IP adresi kaydedilmez" cümlesi istemci tarafından
-               garanti EDİLEMEZ — her HTTP isteği IP'yi zorunlu olarak taşır.
-               Artık yalnızca kontrolümüzdeki şey taahhüt ediliyor. */
-            , React.createElement('div', { style: { background:"#151935", border:"1px solid #252B52", borderRadius:14, padding:"14px", fontSize:13, opacity:.85, lineHeight:1.55 },}, "Onay verirsen, "
-                , React.createElement('b', null, "resmi test" ), " bittiğinde yalnızca şunlar gönderilir: yaş aralığın, takımın, test tipi ve tepki sürelerin. İsim, kimlik veya cihaz tanımlayıcısı gönderilmez."
-                , React.createElement('div', { style: { marginTop:8, opacity:.8 },}
-                  , "Her internet isteği teknik olarak IP adresini taşır; bunu hiçbir site engelleyemez. Bizim taahhüdümüz şu: "
-                  , React.createElement('b', null, "IP adresini sunucumuzda kaydetmiyoruz"), " ve isteği aldığımız anda düşürüyoruz."
-                )
-                , React.createElement('div', { style: { marginTop:8, opacity:.8 },}, "18 yaş altı seçilirse hiçbir gönderim yapılmaz."  )
-            )
-            , React.createElement('div', { style: { fontSize:12, opacity:.55, lineHeight:1.5 },}, "Tercihlerin (yaş aralığı, takım, bu onay ve tarihi) yalnızca bu cihazda, tarayıcı deposunda saklanır — sunucuya gitmez. İstediğin an alttaki \"Onayı sıfırla\" ile silebilirsin. Onay vermesen de oyunu aynen oynayabilirsin."
-
-
-
-            )
-            /* FIX (KVKK m.10): veri sorumlusu kimliği ve haklar hiçbir yerde
-               geçmiyordu. Tek dosyalık kurulumda ayrı bir sayfa 404 vermesin
-               diye bağlantı yalnızca AYDINLATMA_URL doluysa gösteriliyor.
-               Yayına almadan önce yukarıdaki sabiti doldur. */
-            , AYDINLATMA_URL
-              ? React.createElement('div', { style: { fontSize:11, opacity:.5, lineHeight:1.5 },}
-                  , "Veri sorumlusu ve KVKK m.11 kapsamındaki haklarının tamamı için "
-                  , React.createElement('a', { href: AYDINLATMA_URL, style: { color:"#8EA3FF" },}, "aydınlatma metni")
-                  , "ne bakabilirsin."
-                )
-              : null
-            , React.createElement('button', { className: "btn", onClick: ()=>{ setProfile(p=>({ ...p, consent:"accepted" })); setObStep("profile"); },
-              style: { background:"#4DFFB0", color:"#12142B", fontSize:15 },}, "✓ Kabul ediyorum"
-
-            )
-            , React.createElement('button', { className: "btn", onClick: ()=>{ setProfile(p=>({ ...p, consent:"declined" })); setObStep("profile"); },
-              style: { background:"transparent", color:"#8EA3FF", border:"1px dashed #3A437C", fontSize:13 },}, "İstemiyorum, sadece oyna"
-
-            )
-          )
-        )
-      );
-    }
-    // obStep === "profile"
-    const ready = selAge && selTeam;
-    return (
-      React.createElement('div', { className: "shell", style: shell,}
-        , css, header
-        , React.createElement('div', { style: card,}
-          , React.createElement('div', { style: { fontSize:20, fontWeight:800 },}, "Kalibrasyon")
-
-          , React.createElement('div', null
-            , React.createElement('div', { style: { fontSize:12, letterSpacing:2, opacity:.55, fontFamily:FONT_MONO, marginBottom:8 },}, "YAŞ ARALIĞIN" )
-            , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:6 },}
-              , AGE_RANGES.map(a=>(
-                React.createElement('button', { key: a.id, className: "btn", onClick: ()=>setSelAge(a.id), style: {
-                  background: selAge===a.id ? "#2A3160" : "#151935",
-                  color: selAge===a.id ? "#EDEFFB" : "#7C86A8",
-                  border:`1px solid ${selAge===a.id ? "#8EA3FF" : "#252B52"}`,
-                  fontSize:13, padding:"9px 6px",
-                },}, a.label)
-              ))
-            )
-            , selAge==="u18" && (
-              React.createElement('div', { style: { marginTop:8, fontSize:12, color:"#FFE14D", opacity:.85, lineHeight:1.4 },}, "18 yaş altındasın: oyunun tamamı açık, ancak hiçbir istatistik gönderilmez."
-
-              )
-            )
-          )
-
-          , React.createElement('div', null
-            , React.createElement('div', { style: { fontSize:12, letterSpacing:2, opacity:.55, fontFamily:FONT_MONO, marginBottom:8 },}, "ALANINI SEÇ" )
-            , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 },}
-              , TEAMS.map(t=>(
-                React.createElement('button', { key: t.id, className: "btn", onClick: ()=>setSelTeam(t.id), style: {
-                  background: selTeam===t.id ? `${t.color}22` : "#151935",
-                  border:`2px solid ${selTeam===t.id ? t.color : "#252B52"}`,
-                  borderRadius:14, padding:"10px 10px 12px",
-                  display:"flex", flexDirection:"column", alignItems:"stretch", gap:7,
-                  textAlign:"left",
-                },}
-                  , React.createElement('div', { style: { opacity: selTeam===t.id ? 1 : .55, transition:"opacity .2s" },}
-                    , React.createElement(TeamMotif, { id: t.id, color: t.color })
-                  )
-                  , React.createElement('span', { style: { fontWeight:800, letterSpacing:1.5, fontSize:14, color:t.color },}, t.name)
-                  , React.createElement('span', { style: { fontSize:10.5, color:"#7C86A8", lineHeight:1.35 },}, t.desc)
-                )
-              ))
-            )
-            , React.createElement('div', { style: { marginTop:8, fontSize:11, opacity:.45, lineHeight:1.4 },}, "Dördü de refleksin milisaniyeyle ölçüldüğü gerçek alanlar. Seçimin arayüzün rengini belirler; kimliğini göstermez."
-
-            )
-          )
-
-          , React.createElement('button', { className: "btn", disabled: !ready, onClick: ()=>{
-            // FIX (KVKK): rızanın ne zaman ve hangi metin sürümüne verildiği
-            // kaydedilmiyordu; metin değişince eski rıza sessizce geçerli kalıyordu.
-            const p = {
-              consent: _optionalChain([profile, 'optionalAccess', _6 => _6.consent]) || "declined",
-              consentVersion: CONSENT_VERSION,
-              consentAt: new Date().toISOString(),
-              ageRange: selAge, team: selTeam,
-            };
-            setProfile(p); saveProfile(p); setScreen("gate");
-          }, style: { background: ready ? "#4DFFB0" : "#151935", color: ready ? "#12142B" : "#5A6172", fontSize:15 },}
-            , ready ? "▶ Devam" : "Yaş aralığı ve takım seç"
-          )
-        )
-      )
-    );
+  function closeModal(){
+    clearTimeout(timerId);
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
   }
+  closeBtn.addEventListener('click',closeModal);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&overlay.classList.contains('open')) closeModal(); });
 
-  // ================= İZİN EKRANI =================
-  if (screen === "gate") {
-    const sensorOk = sensorState === "granted";
-    return (
-      React.createElement('div', { className: "shell", style: shell,}
-        , css, header
-        , React.createElement('div', { style: {
-          width:"100%", maxWidth:420, background:"linear-gradient(160deg,#232A52,#181C3A)",
-          border:"3px solid #3A437C", borderRadius:28, padding:"28px 22px",
-          display:"flex", flexDirection:"column", gap:16, animation:"riseIn .4s ease-out",
-        },}
-          , React.createElement('div', { style: { fontSize:20, fontWeight:800 },}, "Başlamadan önce" )
-          , React.createElement('div', { style: { fontSize:14, opacity:.8, lineHeight:1.5 },}, "Reacto iki test içerir: "
-                , React.createElement('b', null, "👆 Dokunma Refleksi"  ), " (ekrana dokunma hızı) ve"
-            , React.createElement('b', null, " 🧭 Yön Refleksi"   ), " (telefonu okun yönüne eğme). Yön testi telefonunun"
-            , React.createElement('b', null, " hareket sensörünü"  ), " kullanır."
-          )
-
-          , React.createElement('label', { style: {
-            display:"flex", gap:12, alignItems:"flex-start", cursor:"pointer",
-            background:"#151935", border:`1px solid ${checked ? "#4DFFB0" : "#252B52"}`,
-            borderRadius:14, padding:"14px", transition:"border-color .2s",
-          },}
-            , React.createElement('input', { type: "checkbox", checked: checked, onChange: e=>setChecked(e.target.checked),
-              style: { width:20, height:20, accentColor:"#4DFFB0", marginTop:1, flexShrink:0 },})
-            , React.createElement('span', { style: { fontSize:13, opacity:.85, lineHeight:1.45 },}, "Hareket sensörü verilerimin yalnızca test sırasında, yalnızca cihazımda kullanılacağını anladım ve izin veriyorum. Veriler kaydedilmez ve hiçbir yere gönderilmez."
-
-
-            )
-          )
-
-          , React.createElement('button', { className: "btn", disabled: !checked || sensorState==="requesting", onClick: enableSensor,
-            style: { background: sensorOk ? "#0E5A38" : "#4DFFB0", color: sensorOk ? "#B8FFD9" : "#12142B", fontSize:15 },}
-            , sensorState==="idle" && "🧭 Sensörü Etkinleştir"
-            , sensorState==="requesting" && "İzin bekleniyor..."
-            , sensorState==="granted" && "✓ Sensör aktif"
-            , sensorState==="denied" && "İzin reddedildi — tekrar dene"
-            , sensorState==="nodata" && "Sensör verisi yok — tekrar dene"
-          )
-
-          , sensorOk && (
-            React.createElement('div', { style: { fontFamily:FONT_MONO, fontSize:12, color:"#4DFFB0", textAlign:"center" },}, "Canlı eğim: β "
-                 , tiltNow.beta.toFixed(0), "° / γ "   , tiltNow.gamma.toFixed(0), "° — telefonu oynat, sayılar değişmeli"
-            )
-          )
-
-          , React.createElement('button', { className: "btn", disabled: !sensorOk, onClick: ()=>{ setSimMode(false); setScreen("app"); },
-            style: { background: sensorOk ? "#2A3160" : "#151935", color:"#EDEFFB", border:"1px solid #4A56A0", fontSize:15 },}, "▶ İki testle de devam et"
-
-          )
-
-          /* FIX: eskiden "Teste Geç" düğmesi sensör onayına bağlıydı. Sadece
-             dokunma testi oynamak isteyen kullanıcı, ihtiyaç duymadığı bir
-             sensör iznini vermeye zorlanıyordu. Bu yol artık her zaman açık. */
-          , React.createElement('button', { className: "btn", onClick: ()=>{ setSimMode(true); setTest("tap"); setScreen("app"); },
-            style: { background:"transparent", color:"#8EA3FF", border:"1px dashed #3A437C", fontSize:13, lineHeight:1.45 },}
-            , "Sensörsüz devam et"
-            , React.createElement('div', { style: { fontWeight:400, fontSize:11, opacity:.75, marginTop:3 },}
-              , "Dokunma testi tam çalışır. Yön testi parmakla sürükleme simülasyonuna düşer ve sonucu \"simülasyon\" olarak işaretlenir."
-            )
-          )
-
-          , React.createElement('div', { style: { fontSize:11, opacity:.55, lineHeight:1.4 },}, "iPhone'da izin penceresi açılır; sensör HTTPS gerektirir. Yön testini telefonu dik tutarak ve ekran yukarı bakacak şekilde yap — telefon neredeyse dikeyken sensör açıları kararsızlaşır."
-
-
-          )
-        )
-      )
-    );
-  }
-
-  // ================= TEST EKRANI =================
-  return (
-    React.createElement('div', { className: "shell", style: shell,
-      onPointerDown: simMode && test==="tilt" ? onSimStart : undefined,
-      onPointerMove: simMode && test==="tilt" ? onSimMove : undefined,
-      onPointerUp: simMode && test==="tilt" ? onSimEnd : undefined,}
-
-      , css, header
-
-      /* Test seçici */
-      , React.createElement('div', { style: { display:"flex", gap:8, marginBottom:10 },}
-        , ["tap","tilt"].map(t => (
-          React.createElement('button', { key: t, className: "btn", onClick: ()=>switchTest(t), style: {
-            background: test===t ? "#2A3160" : "#151935",
-            color: test===t ? "#EDEFFB" : "#7C86A8",
-            border:`1px solid ${test===t ? accent : "#252B52"}`,
-          },}, TEST_ICONS[t], " " , TEST_NAMES[t])
-        ))
-      )
-
-      /* Mod seçici */
-      , React.createElement('div', { style: { display:"flex", gap:8, marginBottom:12, alignItems:"center" },}
-        , React.createElement('button', { className: "btn", onClick: exitOfficial, style: {
-          background: mode==="free" ? "#2A3160" : "#151935",
-          color: mode==="free" ? "#EDEFFB" : "#7C86A8",
-          border:`1px solid ${mode==="free" ? "#4A56A0" : "#252B52"}`,
-        },}, "Serbest")
-        , React.createElement('button', { className: "btn", onClick: startOfficial, style: {
-          background: mode==="official" ? "#4A3A10" : "#151935",
-          color: mode==="official" ? "#FFE14D" : "#7C86A8",
-          border:`1px solid ${mode==="official" ? "#FFE14D" : "#252B52"}`,
-        },}, "🏅 Resmi Test"  )
-        , simMode && test==="tilt" && React.createElement('span', { style: { fontFamily:FONT_MONO, fontSize:11, color:accent },}, "SİM")
-      )
-
-      , mode === "official" && phase !== "certificate" && (
-        React.createElement('div', { style: { display:"flex", gap:6, alignItems:"center", marginBottom:12, fontFamily:FONT_MONO, fontSize:12 },}
-          , React.createElement('span', { style: { color:"#FFE14D" },}, "Deneme " , Math.min(S.official.length+1, OFFICIAL_N), "/", OFFICIAL_N)
-          , Array.from({length:OFFICIAL_N}).map((_,i)=>(
-            React.createElement('div', { key: i, style: { width:26, height:8, borderRadius:4,
-              background: i < S.official.length ? accent : "#252B52", transition:"background .3s" },})
-          ))
-          , test==="tilt" && S.wrong > 0 && React.createElement('span', { style: { color:"#FF9B9B" },}, "✗", S.wrong)
-        )
-      )
-
-      , mode === "free" && (
-        React.createElement('div', { style: { display:"flex", gap:8, marginBottom:12, fontFamily:FONT_MONO, fontSize:12, flexWrap:"wrap", justifyContent:"center" },}
-          , React.createElement('div', { style: { background:"#1A1E3E", border:"1px solid #2C3462", borderRadius:10, padding:"6px 12px" },}, "En iyi: "
-              , React.createElement('b', { style: { color:"#FFE14D" },}, S.best !== null ? S.best+" ms" : "—")
-          )
-          /* FIX: history yalnızca son 10 denemeyi tutuyor; etiket "Ortalama"
-             diyerek tüm oturumu kapsıyormuş izlenimi veriyordu. */
-          , React.createElement('div', { style: { background:"#1A1E3E", border:"1px solid #2C3462", borderRadius:10, padding:"6px 12px" },}, "Son 10 ort.: "
-             , React.createElement('b', { style: { color:accent },}, avg !== null ? avg+" ms" : "—")
-          )
-          , React.createElement('div', { style: { background:"#1A1E3E", border:"1px solid #2C3462", borderRadius:10, padding:"6px 12px" },}, "Deneme: "
-             , React.createElement('b', null, S.history.length)
-          )
-          , test==="tilt" && (
-            React.createElement('div', { style: { background:"#1A1E3E", border:"1px solid #2C3462", borderRadius:10, padding:"6px 12px" },}, "Yanlış: "
-               , React.createElement('b', { style: { color:"#FF9B9B" },}, S.wrong)
-            )
-          )
-        )
-      )
-
-      , phase === "certificate" && cert ? (
-        React.createElement('div', { style: {
-          width:"100%", maxWidth:420, borderRadius:28, padding:"30px 22px",
-          background:"linear-gradient(160deg,#232A52,#181C3A)",
-          border:`3px solid ${accent}`,
-          display:"flex", flexDirection:"column", alignItems:"center", gap:10, textAlign:"center",
-          "--glow": accent + "66",
-          animation:"riseIn .4s ease-out, certGlow 2.4s infinite",
-        },}
-          , myTeam && React.createElement('div', { style: { width:"100%", maxWidth:300, animation:"popIn .4s ease-out both" },}
-            , React.createElement(TeamMotif, { id: myTeam.id, color: myTeam.color })
-            , React.createElement('div', { style: { display:"flex", justifyContent:"space-between", alignItems:"baseline", marginTop:6, gap:8 },}
-              , React.createElement('span', { style: { fontFamily:FONT_MONO, fontWeight:700, fontSize:12, letterSpacing:2, color:accent },}, myTeam.name)
-              , React.createElement('span', { style: { fontFamily:FONT_MONO, fontSize:10, color:"#7C86A8", textAlign:"right" },}, myTeam.desc)
-            )
-          )
-          , React.createElement('div', { style: { fontFamily:FONT_MONO, fontSize:11, letterSpacing:3, color:accent },}
-            , TEST_ICONS[test], " " , upperTR(TEST_NAMES[test]), " — RESMİ SONUÇ"
-          )
-          , React.createElement('div', { style: { width:96, height:96, animation:"popIn .4s .1s ease-out both" },}
-            , React.createElement(RobotFace, { mood: mood, color: accent,})
-          )
-          , React.createElement('div', { style: { fontFamily:FONT_MONO, fontSize:56, fontWeight:700, lineHeight:1, color:accent, animation:"popIn .35s .2s ease-out both" },}
-            , cert.median, React.createElement('span', { style: { fontSize:20, opacity:.7 },}, " ms" )
-          )
-          , React.createElement('div', { style: { fontSize:11, fontFamily:FONT_MONO, opacity:.55, marginTop:-4 },}
-            , OFFICIAL_N, " denemenin medyanı"
-          )
-          , React.createElement('div', { style: {
-            fontSize:22, fontWeight:800, letterSpacing:2, color:accent,
-            border:`2px solid ${accent}`, borderRadius:999, padding:"8px 22px",
-            animation:"popIn .35s .35s ease-out both",
-          },}
-            , cert.tier.emoji, " " , cert.tier.name
-          )
-          , React.createElement('div', { style: { opacity:.85, fontSize:14, maxWidth:290 },}, cert.tier.msg)
-          , React.createElement('div', { style: { fontFamily:FONT_MONO, fontSize:13, color:accent },}, "Tahminen insanların %"
-             , cert.pct < 1 ? cert.pct.toFixed(1) : Math.round(cert.pct), "'inden hızlısın"
-          )
-          , React.createElement('div', { style: { display:"flex", gap:6, flexWrap:"wrap", justifyContent:"center", marginTop:4 },}
-            , cert.attempts.map((ms,i)=>(
-              React.createElement('div', { key: i, style: {
-                fontFamily:FONT_MONO, fontSize:12,
-                background: ms === cert.median ? `${accent}22` : "#151935", border:`1px solid ${ms === cert.median ? accent : "#2C3462"}`,
-                color: ms === cert.median ? accent : "#9AA3C8",
-                fontWeight: ms === cert.median ? 700 : 400,
-                borderRadius:8, padding:"4px 9px",
-              },}, ms, ms === cert.median ? " ◂" : "")
-            ))
-          )
-          , test==="tilt" && S.wrong > 0 && (
-            React.createElement('div', { style: { fontSize:12, fontFamily:FONT_MONO, color:"#FF9B9B" },}, "Yanlış yön: "  , S.wrong, " kez" )
-          )
-          /* FIX: simülasyon sonucu gerçek sensör ölçümüyle aynı görünüyordu. */
-          , cert.sim && (
-            React.createElement('div', { style: { fontSize:11, fontFamily:FONT_MONO, color:"#FFE14D", opacity:.85, maxWidth:290, lineHeight:1.5 },}
-              , "Simülasyon modu — parmak sürüklemesiyle ölçüldü, sensörle değil. Gerçek yön refleksiyle karşılaştırılamaz."
-            )
-          )
-          , React.createElement('div', { style: { display:"flex", gap:10, marginTop:12 },}
-            , React.createElement('button', { className: "btn", onClick: shareCert, style: { background:accent, color:"#12142B" },}, "📤 Sonucu Paylaş"  )
-            , React.createElement('button', { className: "btn", onClick: startOfficial, style: { background:"#2A3160", color:"#EDEFFB", border:"1px solid #4A56A0" },}, "↻ Yeni Test"  )
-          )
-          , shareMsg && React.createElement('div', { style: { fontSize:12, fontFamily:FONT_MONO, color:"#4DFFB0" },}, shareMsg)
-          , React.createElement('button', { className: "btn", onClick: exitOfficial, style: { background:"transparent", color:"#7C86A8", fontSize:12, padding:"4px 8px" },}, "Serbest moda dön"
-
-          )
-        )
-      ) : (
-      React.createElement('div', {
-        className: "pad",
-        onPointerDown: handlePad,
-        role: "button", tabIndex: 0,
-        "aria-label": test==="tap"
-          ? "Dokunma refleksi alanı. Başlatmak için etkinleştir, ekran yeşile döndüğünde tekrar etkinleştir."
-          : "Yön refleksi alanı. Başlatmak için etkinleştir, sonra telefonu okun yönüne eğ.",
-        onKeyDown: (e)=>{ if((e.key===" "||e.key==="Enter") && test==="tap"){ e.preventDefault(); handlePad(); }},
-        style: {
-          width:"100%", maxWidth:420, minHeight:400,
-          background: {
-            idle:"linear-gradient(160deg,#232A52,#181C3A)",
-            armed:"linear-gradient(160deg,#5A1B26,#3A1119)",
-            go:"linear-gradient(160deg,#0E5A38,#0A3D27)",
-            result:"linear-gradient(160deg,#232A52,#181C3A)",
-            early:"linear-gradient(160deg,#5A1B26,#3A1119)",
-            wrong:"linear-gradient(160deg,#5A1B26,#3A1119)",
-            miss:"linear-gradient(160deg,#3E3418,#241E10)",
-          }[phase],
-          border:`3px solid ${
-            phase==="armed"||phase==="early"||phase==="wrong" ? "#FF5D5D" :
-            phase==="miss" ? "#C9A15A" :
-            phase==="go" ? "#30E67A" :
-            phase==="result" ? accent :
-            mode==="official" ? "#FFE14D" : accent}`,
-          borderRadius:28, cursor:"pointer", userSelect:"none", touchAction:"none",
-          display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
-          gap:10, padding:"28px 20px", textAlign:"center",
-          transition:"background .2s, border-color .2s",
-          animation: phase==="go" ? "pulseGo .5s infinite" : "none",
-          /* FIX: outline:"none" kaldırıldı — .pad:focus-visible kuralı devrede. */
-        },}
-
-        , !(phase==="go" && test==="tilt") && (
-          React.createElement('div', { style: { width:100, height:100, animation: phase==="armed" ? "blinkArm 1s infinite" : phase==="result" ? "popIn .3s ease-out" : "none" },}
-            , React.createElement(RobotFace, { mood: mood, color: faceColor,})
-          )
-        )
-
-        , phase === "idle" && (
-          React.createElement(React.Fragment, null
-            , React.createElement('div', { style: { fontSize:22, fontWeight:800 },}
-              , mode==="official" ? "Resmi test başlıyor." : test==="tap" ? "Dokunma refleksi." : "Yön refleksi."
-            )
-            , React.createElement('div', { style: { opacity:.75, fontSize:14, maxWidth:300 },}
-              , test==="tap"
-                ? React.createElement(React.Fragment, null, "Dokun ve bekle. Ekran "    , React.createElement('b', { style: {color:"#30E67A"},}, "yeşile"), " döndüğü an tekrar dokun."    )
-                : React.createElement(React.Fragment, null, "Dokun, telefonu düz tut ve bekle. Ok belirdiği an telefonu "          , React.createElement('b', null, "okun yönüne eğ"  ), ".", simMode && " (Sim: parmağını o yöne sürükle.)")
-              , mode==="official" && React.createElement(React.Fragment, null, " " , OFFICIAL_N, " deneme; unvanı "   , React.createElement('b', null, "medyan"), " belirler." )
-            )
-            , React.createElement('div', { style: { marginTop:8, fontFamily:FONT_MONO, fontSize:13, color: mode==="official" ? "#FFE14D" : accent },}, "▶ BAŞLAT" )
-          )
-        )
-
-        , phase === "armed" && (
-          React.createElement(React.Fragment, null
-            , React.createElement('div', { style: { fontSize:22, fontWeight:800, color:"#FF9B9B" },}
-              , test==="tap" ? "Bekle..." : "Düz tut, bekle..."
-            )
-            , React.createElement('div', { style: { opacity:.7, fontSize:13 },}
-              , test==="tap" ? "Yeşili görmeden dokunma" : "Ok her an gelebilir"
-            )
-          )
-        )
-
-        , phase === "go" && test==="tap" && (
-          React.createElement('div', { style: { fontSize:34, fontWeight:800, color:"#B8FFD9", letterSpacing:1 },}, "DOKUN!")
-        )
-
-        , phase === "go" && test==="tilt" && target && (
-          React.createElement(React.Fragment, null
-            , React.createElement('div', { style: { fontSize:110, lineHeight:1, color:"#B8FFD9", animation:"popIn .12s ease-out" },}, DIRS[target].arrow)
-            , React.createElement('div', { style: { fontSize:26, fontWeight:800, letterSpacing:3, color:"#B8FFD9" },}, DIRS[target].label, " EĞ!" )
-          )
-        )
-
-        , phase === "miss" && (
-          React.createElement(React.Fragment, null
-            , React.createElement('div', { style: { fontSize:20, fontWeight:800, color:"#E8C97A" },}, "Deneme kaçtı" )
-            , React.createElement('div', { style: { opacity:.75, fontSize:13, maxWidth:280 },}
-              , (MAX_MS[test]/1000).toFixed(0), " saniye içinde cevap gelmedi, bu yüzden sayılmadı."
-              , mode==="official" && " Tekrarlanacak."
-            )
-            , React.createElement('div', { style: { marginTop:8, fontFamily:FONT_MONO, fontSize:13, color:accent },}, "↻ TEKRAR DENE"  )
-          )
-        )
-
-        , phase === "early" && (
-          React.createElement(React.Fragment, null
-            , React.createElement('div', { style: { fontSize:20, fontWeight:800, color:"#FF9B9B" },}
-              , test==="tap" ? "Erken dokundun!" : "Erken hareket!"
-            )
-            , React.createElement('div', { style: { opacity:.75, fontSize:13, maxWidth:260 },}
-              , mode==="official" ? "Bu deneme sayılmadı — tekrarlanacak." : `${MIN_MS} ms altı tepki insan için imkânsızdır — sen tahmin ettin.`
-            )
-            , React.createElement('div', { style: { marginTop:8, fontFamily:FONT_MONO, fontSize:13, color:accent },}, "↻ TEKRAR DENE"  )
-          )
-        )
-
-        , phase === "wrong" && (
-          React.createElement(React.Fragment, null
-            , React.createElement('div', { style: { fontSize:20, fontWeight:800, color:"#FF9B9B" },}, "Yanlış yön!" )
-            , React.createElement('div', { style: { opacity:.75, fontSize:13, maxWidth:280 },}, "Hız vardı ama karar yanlıştı — seçimli tepkinin zor kısmı bu."
-
-              , mode==="official" && " Bu deneme sayılmadı, tekrarlanacak."
-            )
-            , React.createElement('div', { style: { marginTop:8, fontFamily:FONT_MONO, fontSize:13, color:accent },}, "↻ TEKRAR DENE"  )
-          )
-        )
-
-        , phase === "result" && tier && (
-          React.createElement('div', { style: { animation:"popIn .3s ease-out", display:"flex", flexDirection:"column", alignItems:"center", gap:6 },}
-            , React.createElement('div', { style: { fontFamily:FONT_MONO, fontSize:52, fontWeight:700, lineHeight:1, color:accent },}
-              , result, React.createElement('span', { style: { fontSize:20, opacity:.7 },}, " ms" )
-            )
-            , mode === "free" ? (
-              React.createElement(React.Fragment, null
-                , React.createElement('div', { style: { fontSize:20, fontWeight:800, letterSpacing:2, color:accent, border:`2px solid ${accent}`, borderRadius:999, padding:"6px 18px", marginTop:4 },}
-                  , tier.emoji, " " , tier.name
-                )
-                , React.createElement('div', { style: { opacity:.8, fontSize:14, maxWidth:280 },}, tier.msg)
-                , React.createElement('div', { style: { fontFamily:FONT_MONO, fontSize:12, color:accent, marginTop:2 },}, "Tahminen insanların %"
-                   , pct < 1 ? pct.toFixed(1) : Math.round(pct), "'inden hızlısın"
-                )
-              )
-            ) : (
-              React.createElement('div', { style: { opacity:.8, fontSize:14 },}, "Kaydedildi — "  , OFFICIAL_N - S.official.length, " deneme kaldı"  )
-            )
-            , React.createElement('div', { style: { marginTop:8, fontFamily:FONT_MONO, fontSize:13, color:accent },}
-              , mode==="official" ? "▶ SONRAKİ DENEME" : "↻ TEKRAR"
-            )
-          )
-        )
-      )
-      )
-
-      , mode === "free" && S.history.length > 0 && phase !== "certificate" && (
-        React.createElement('div', { style: { marginTop:14, display:"flex", gap:6, flexWrap:"wrap", justifyContent:"center", maxWidth:420 },}
-          , S.history.map((ms,i)=>{ const isLatest = i === S.history.length-1; return (
-            React.createElement('div', { key: i, style: { fontFamily:FONT_MONO, fontSize:12,
-              fontWeight: isLatest ? 700 : 400,
-              background: isLatest ? `${accent}22` : "#1A1E3E",
-              border:`1px solid ${isLatest ? accent : "#2C3462"}`,
-              color: isLatest ? accent : "#7C86A8", borderRadius:8, padding:"4px 9px" },}, ms)
-          );})
-        )
-      )
-
-      , React.createElement('div', { style: { marginTop:22, width:"100%", maxWidth:420 },}
-        , React.createElement('div', { style: { fontSize:12, letterSpacing:2, opacity:.55, marginBottom:8, fontFamily:FONT_MONO },}, "SEVİYELER — "
-            , upperTR(TEST_NAMES[test])
-        )
-        , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 },}
-          , TIERS.map((t,i)=>{
-            const lo = i===0 ? 0 : TIERS[i-1].max;
-            // FIX: eşik "ms < max" olduğu için 200 aslında bir sonraki kutuya
-            // aitti ama etiketler "0–200" ve "200–250" diyordu.
-            const label = t.max===Infinity ? `${lo}+ ms` : `${lo}–${t.max - 1} ms`;
-            const active = (phase==="certificate" && cert && cert.tier.name===t.name) || (phase==="result" && tier && tier.name===t.name);
-            return (
-              React.createElement('div', { key: t.name, style: {
-                display:"flex", justifyContent:"space-between", alignItems:"center",
-                background: active ? `${accent}22` : "#151935",
-                border:`1px solid ${active ? accent : "#252B52"}`,
-                borderRadius:10, padding:"7px 11px", fontSize:12, transition:"background .3s, border-color .3s",
-              },}
-                , React.createElement('span', { style: { fontWeight: active ? 800 : 600, color: active ? accent : "#7C86A8" },}, t.emoji, " " , t.name)
-                , React.createElement('span', { style: { fontFamily:FONT_MONO, opacity:.65, color: active ? accent : "#7C86A8" },}, label)
-              )
-            );
-          })
-        )
-      )
-
-      /* FIX: sonuç değişimleri ekran okuyuculara hiç duyurulmuyordu. */
-      , React.createElement('div', { className: "sronly", role: "status", "aria-live": "polite",}
-        , phase==="armed" ? "Bekle." :
-          phase==="go" ? (test==="tap" ? "Şimdi dokun." : `Telefonu ${target ? DIRS[target].label.toLowerCase() : ""} eğ.`) :
-          phase==="early" ? "Erken hareket, deneme sayılmadı." :
-          phase==="wrong" ? "Yanlış yön." :
-          phase==="miss" ? "Deneme kaçtı." :
-          phase==="result" && result !== null ? `Sonuç ${result} milisaniye.` :
-          phase==="certificate" && cert ? `Resmi sonuç, medyan ${cert.median} milisaniye, ${cert.tier.name}.` : ""
-      )
-
-      /* FIX: "eğlence amaçlıdır" uyarısı hiç yoktu; "RESMİ SONUÇ" + sertifika +
-         yüzdelik üçlüsü ölçümü doğrulanmış bir değerlendirme gibi gösteriyordu. */
-      , React.createElement('div', { style: { marginTop:18, textAlign:"center", fontSize:11, opacity:.55, lineHeight:1.6, maxWidth:420 },}
-        , "Reacto eğlence amaçlıdır; tıbbi veya bilişsel bir değerlendirme değildir. Yüzdelik değerleri tahminidir. Tepki süresi yaş, yorgunluk, ilaç ve cihazın ekran gecikmesine göre değişir."
-      )
-
-      , React.createElement('div', { style: { marginTop:10, textAlign:"center", fontSize:11, opacity:.5, lineHeight:1.6, maxWidth:420 },}
-        , _optionalChain([profile, 'optionalAccess', _7 => _7.consent]) === "accepted" && _optionalChain([profile, 'optionalAccess', _8 => _8.ageRange]) !== "u18"
-          ? "Resmi test sonuçların istatistik olarak gönderilir (kimlik bilgisi içermez)."
-          : "Hiçbir veri gönderilmiyor — sadece oynuyorsun."
-        , " "
-        /* FIX: <span onClick> klavyeyle erişilemiyordu ve rolü yoktu. */
-        , React.createElement('button', { className: "linkbtn", type: "button",
-          onClick: ()=>{ resetRound(); clearProfile(); setProfile(null); setSelAge(null); setSelTeam(null); setObStep("consent"); setScreen("onboard"); },
-          },  "Onayı sıfırla")
-      )
-    )
-  );
-}
-// FIX: hata sınırı yoktu. Render sırasında tek bir istisna, kullanıcıya
-// hiçbir açıklama vermeden bomboş koyu bir ekran bırakıyordu.
-class Boundary extends React.Component {
-  constructor(p){ super(p); this.state = { failed:false }; }
-  static getDerivedStateFromError(){ return { failed:true }; }
-  componentDidCatch(err){ if (window.console) console.error("Reacto:", err); }
-  render(){
-    if (!this.state.failed) return this.props.children;
-    return React.createElement('div', { style: {
-      minHeight:"60vh", display:"flex", flexDirection:"column", alignItems:"center",
-      justifyContent:"center", gap:14, color:"#EDEFFB", textAlign:"center",
-      fontFamily:FONT_DISPLAY, padding:"24px",
-    },}
-      , React.createElement('div', { style: { fontSize:20, fontWeight:800 },}, "Bir şeyler ters gitti" )
-      , React.createElement('div', { style: { fontSize:14, opacity:.75, maxWidth:320, lineHeight:1.5 },}
-        , "Test durduruldu. Kaydedilmiş tercihlerin duruyor; yeniden başlatmak sorunu genellikle çözer." )
-      , React.createElement('button', { className: "btn", onClick: ()=>window.location.reload(),
-        style: { background:"#4DFFB0", color:"#12142B", fontSize:15 },}, "Yeniden başlat" )
-    );
-  }
-}
-
-if (typeof React !== "undefined" && typeof ReactDOM !== "undefined") {
-  ReactDOM.createRoot(document.getElementById("root")).render(
-    React.createElement(Boundary, null, React.createElement(Reacto, null))
-  );
-}
-
-</script>
-<script>
-// =============== ESKİ SERVICE WORKER TEMİZLİĞİ ===============
-// PWA kaldırıldı. Ama siteyi DAHA ÖNCE ziyaret etmiş kullanıcıların
-// tarayıcısında eski service worker hâlâ kurulu ve önbellekten servis etmeye
-// devam ediyor — kaydı silmek onu kaldırmaz. O kullanıcılar yeni sürümü asla
-// görmez. Aşağıdaki blok bunu bir kez temizler ve sonra hiçbir şey yapmaz.
-//
-// Siteyi hiç yayına almadıysan bu bloğu silebilirsin.
-// Yayındaysan birkaç ay bırak (kullanıcıların tekrar uğraması için), sonra sil.
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.getRegistrations()
-    .then((regs) => {
-      if (!regs.length) return;
-      return Promise.all(regs.map((r) => r.unregister())).then(() => {
-        // Eski önbellekleri de boşalt, yoksa disk üzerinde öylece durur.
-        if (!window.caches) return;
-        return caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))));
-      }).then(() => {
-        // SW kaldırıldı ama bu sayfa hâlâ onun servis ettiği eski sürüm olabilir.
-        // Tek seferlik yenile; sessionStorage bayrağı sonsuz döngüyü engeller.
-        try {
-          if (!sessionStorage.getItem("reacto.swCleared")) {
-            sessionStorage.setItem("reacto.swCleared", "1");
-            window.location.reload();
-          }
-        } catch (e) {}
-      });
-    })
-    .catch(() => {});
-}
+  // triggers: nav link + game-band button open the modal (fallback: navigate to reaksiyon.html if JS off)
+  document.querySelectorAll('a[href="reaksiyon.html"]').forEach(function(a){
+    if(a.closest('footer')) return; // footer link stays as standalone page navigation
+    a.addEventListener('click',openModal);
+  });
+})();
 </script>
 </body>
 </html>
