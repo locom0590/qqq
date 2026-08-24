@@ -83,6 +83,20 @@
   .triage-chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:#8FD49B;border:1px solid rgba(143,212,155,.45);background:rgba(46,125,50,.16);border-radius:10px;padding:9px 13px}
   .dash-note{margin-top:16px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:rgba(243,241,235,.35)}
 
+  /* hero game launcher */
+  .lab-game{display:flex;flex-direction:column;cursor:pointer}
+  .hg-body{display:flex;flex-direction:column;align-items:center;text-align:center;padding:26px 10px 14px;position:relative;z-index:1}
+  .hg-q{font-family:var(--disp);font-weight:900;font-size:clamp(88px,10vw,130px);line-height:1;color:var(--bone);letter-spacing:-.02em}
+  .hg-q i{font-style:normal;font-size:.3em;color:var(--amber);font-weight:800}
+  .hg-body h3{font-family:var(--disp);font-weight:900;font-size:clamp(22px,2.6vw,30px);color:var(--bone);margin-top:14px}
+  .hg-body p{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--steel);margin-top:10px}
+  .hg-avg{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:rgba(243,241,235,.5);margin-top:16px;border-top:1px solid rgba(243,241,235,.12);padding-top:14px;width:100%;max-width:280px}
+  .lab-game .btn{margin-top:20px}
+  @media(max-width:900px){
+    .hero{padding:26px 0 34px}
+    .lab-game{order:-1}
+  }
+
   /* ---------- GAIT STRIP ---------- */
   .gait{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bone-2)}
   .gait-in{display:grid;grid-template-columns:repeat(4,1fr)}
@@ -232,81 +246,17 @@
       </div>
       <div class="hero-note">locomotion.com.tr — hekim onayı olmadan program başlamaz.</div>
     </div>
-    <div class="lab">
-      <div class="dash">
-        <div class="dash-head">
-          <span class="dash-title">DEĞERLENDİRME ÖZETİ</span>
-          <span class="dash-tag">ÖRNEK RAPOR</span>
-        </div>
-        <div class="dash-grid">
-          <div class="radar-wrap">
-            <svg viewBox="0 0 300 300" role="img" aria-label="Altı vücut bölgesi için hareket skoru radar grafiği">
-              <!-- rings -->
-              <polygon points="150,45 240.9,97.5 240.9,202.5 150,255 59.1,202.5 59.1,97.5" fill="none" stroke="rgba(243,241,235,0.16)" stroke-width="1"/>
-              <polygon points="150,80.7 210,115.35 210,184.65 150,219.3 90,184.65 90,115.35" fill="none" stroke="rgba(243,241,235,0.12)" stroke-width="1"/>
-              <polygon points="150,115.35 180,132.7 180,167.3 150,184.65 120,167.3 120,132.7" fill="none" stroke="rgba(243,241,235,0.10)" stroke-width="1"/>
-              <!-- axes -->
-              <g stroke="rgba(243,241,235,0.10)" stroke-width="1">
-                <line x1="150" y1="150" x2="150" y2="45"/>
-                <line x1="150" y1="150" x2="240.9" y2="97.5"/>
-                <line x1="150" y1="150" x2="240.9" y2="202.5"/>
-                <line x1="150" y1="150" x2="150" y2="255"/>
-                <line x1="150" y1="150" x2="59.1" y2="202.5"/>
-                <line x1="150" y1="150" x2="59.1" y2="97.5"/>
-              </g>
-              <!-- data -->
-              <polygon points="150,68.1 206.4,117.45 213.66,186.75 150,219.3 97.3,180.45 82.7,111.15"
-                       fill="rgba(217,145,43,0.20)" stroke="#D9912B" stroke-width="2" stroke-linejoin="round"/>
-              <g fill="#D9912B">
-                <circle cx="150" cy="68.1" r="4"/>
-                <circle cx="206.4" cy="117.45" r="4"/>
-                <circle cx="213.66" cy="186.75" r="4"/>
-                <circle cx="150" cy="219.3" r="4"/>
-                <circle cx="97.3" cy="180.45" r="4"/>
-                <circle cx="82.7" cy="111.15" r="4"/>
-              </g>
-              <!-- labels -->
-              <g font-family="IBM Plex Mono, monospace" font-size="10" fill="rgba(243,241,235,0.6)" letter-spacing="1">
-                <text x="150" y="32" text-anchor="middle">BEL/BOYUN</text>
-                <text x="252" y="92" text-anchor="start">OMUZ</text>
-                <text x="252" y="214" text-anchor="start">DİZ</text>
-                <text x="150" y="276" text-anchor="middle">KALÇA</text>
-                <text x="48" y="214" text-anchor="end">AYAK B.</text>
-                <text x="48" y="92" text-anchor="end">DİRSEK</text>
-              </g>
-            </svg>
-          </div>
-          <div class="metrics">
-            <div class="metric">
-              <div class="m-row"><span>MOBİLİTE</span><b>78<i>/100</i></b></div>
-              <div class="m-bar"><span style="width:78%"></span></div>
-            </div>
-            <div class="metric">
-              <div class="m-row"><span>STABİLİTE</span><b>64<i>/100</i></b></div>
-              <div class="m-bar"><span style="width:64%"></span></div>
-            </div>
-            <div class="metric">
-              <div class="m-row"><span>KUVVET</span><b>71<i>/100</i></b></div>
-              <div class="m-bar"><span style="width:71%"></span></div>
-            </div>
-            <div class="metric">
-              <div class="m-row"><span>SAĞ/SOL SİMETRİ</span><b>%92</b></div>
-              <div class="m-bar"><span style="width:92%"></span></div>
-            </div>
-          </div>
-        </div>
-        <div class="dash-foot">
-          <div class="spark">
-            <div class="spark-label">VAS AĞRI TRENDİ <b>8 → 2</b> · 8 HAFTA</div>
-            <svg viewBox="0 0 162 44" preserveAspectRatio="none" aria-label="Sekiz haftalık ağrı skoru düşüş grafiği">
-              <polyline points="4,10 26,14 48,14 70,18 92,22 114,26 136,30 158,34"
-                        fill="none" stroke="#D9912B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="158" cy="34" r="3.5" fill="#F3F1EB"/>
-            </svg>
-          </div>
-          <div class="triage-chip">TRİYAJ: FİLTRE 3 · KISITLAMALI KABUL</div>
-        </div>
-        <div class="dash-note">Temsili veridir — gerçek üye verisi değildir.</div>
+    <div class="lab lab-game" id="heroGame">
+      <div class="dash-head">
+        <span class="dash-title">REAKSİYON LAB ⚡</span>
+        <span class="dash-tag">CANLI TEST</span>
+      </div>
+      <div class="hg-body">
+        <div class="hg-q">?<i>ms</i></div>
+        <h3>Ne kadar hızlısın?</h3>
+        <p>5 tur · tarayıcıda çalışır · uygulama gerekmez</p>
+        <span class="hg-avg">ORTALAMA İNSAN: ~273 MS</span>
+        <a class="btn amber" href="reaksiyon.html">Testi Başlat ⚡</a>
       </div>
     </div>
   </div>
@@ -448,22 +398,91 @@
   </div>
 </section>
 
-<!-- REAKSİYON LAB -->
-<section id="reaksiyon" style="padding-top:0">
+<!-- DEĞERLENDİRME RAPORU -->
+<section id="rapor" style="padding-top:0">
   <div class="wrap">
-    <div class="game-band reveal">
-      <div class="game-left">
-        <div class="eyebrow">Reaksiyon Lab ⚡</div>
-        <h2>Refleksin ne kadar hızlı?</h2>
-        <p>5 tur, ortalaman skorun. Tarayıcıda çalışır, uygulama gerekmez —
-        skorunu paylaş, arkadaşına meydan oku.</p>
-        <a class="btn amber" href="reaksiyon.html">Testi Başlat</a>
-      </div>
-      <div class="game-ms">
-        <b>247<i>ms</i></b>
-        <span>ORTALAMA İNSAN: ~273 MS</span>
-      </div>
+    <div class="sec-head reveal">
+      <h2>Ölçmediğimizi programlamayız.</h2>
+      <p>Her üyenin dosyasında skorlar, kısıtlamalar ve kontrol tarihleri yazılı olarak durur.
+      Aşağıdaki temsili rapor, değerlendirme çıktımızın yapısını gösterir.</p>
     </div>
+      <div class="lab reveal" style="max-width:680px;margin:0 auto">
+        <div class="dash">
+          <div class="dash-head">
+            <span class="dash-title">DEĞERLENDİRME ÖZETİ</span>
+            <span class="dash-tag">ÖRNEK RAPOR</span>
+          </div>
+        <div class="dash-grid">
+          <div class="radar-wrap">
+            <svg viewBox="0 0 300 300" role="img" aria-label="Altı vücut bölgesi için hareket skoru radar grafiği">
+              <!-- rings -->
+              <polygon points="150,45 240.9,97.5 240.9,202.5 150,255 59.1,202.5 59.1,97.5" fill="none" stroke="rgba(243,241,235,0.16)" stroke-width="1"/>
+              <polygon points="150,80.7 210,115.35 210,184.65 150,219.3 90,184.65 90,115.35" fill="none" stroke="rgba(243,241,235,0.12)" stroke-width="1"/>
+              <polygon points="150,115.35 180,132.7 180,167.3 150,184.65 120,167.3 120,132.7" fill="none" stroke="rgba(243,241,235,0.10)" stroke-width="1"/>
+              <!-- axes -->
+              <g stroke="rgba(243,241,235,0.10)" stroke-width="1">
+                <line x1="150" y1="150" x2="150" y2="45"/>
+                <line x1="150" y1="150" x2="240.9" y2="97.5"/>
+                <line x1="150" y1="150" x2="240.9" y2="202.5"/>
+                <line x1="150" y1="150" x2="150" y2="255"/>
+                <line x1="150" y1="150" x2="59.1" y2="202.5"/>
+                <line x1="150" y1="150" x2="59.1" y2="97.5"/>
+              </g>
+              <!-- data -->
+              <polygon points="150,68.1 206.4,117.45 213.66,186.75 150,219.3 97.3,180.45 82.7,111.15"
+                       fill="rgba(217,145,43,0.20)" stroke="#D9912B" stroke-width="2" stroke-linejoin="round"/>
+              <g fill="#D9912B">
+                <circle cx="150" cy="68.1" r="4"/>
+                <circle cx="206.4" cy="117.45" r="4"/>
+                <circle cx="213.66" cy="186.75" r="4"/>
+                <circle cx="150" cy="219.3" r="4"/>
+                <circle cx="97.3" cy="180.45" r="4"/>
+                <circle cx="82.7" cy="111.15" r="4"/>
+              </g>
+              <!-- labels -->
+              <g font-family="IBM Plex Mono, monospace" font-size="10" fill="rgba(243,241,235,0.6)" letter-spacing="1">
+                <text x="150" y="32" text-anchor="middle">BEL/BOYUN</text>
+                <text x="252" y="92" text-anchor="start">OMUZ</text>
+                <text x="252" y="214" text-anchor="start">DİZ</text>
+                <text x="150" y="276" text-anchor="middle">KALÇA</text>
+                <text x="48" y="214" text-anchor="end">AYAK B.</text>
+                <text x="48" y="92" text-anchor="end">DİRSEK</text>
+              </g>
+            </svg>
+          </div>
+          <div class="metrics">
+            <div class="metric">
+              <div class="m-row"><span>MOBİLİTE</span><b>78<i>/100</i></b></div>
+              <div class="m-bar"><span style="width:78%"></span></div>
+            </div>
+            <div class="metric">
+              <div class="m-row"><span>STABİLİTE</span><b>64<i>/100</i></b></div>
+              <div class="m-bar"><span style="width:64%"></span></div>
+            </div>
+            <div class="metric">
+              <div class="m-row"><span>KUVVET</span><b>71<i>/100</i></b></div>
+              <div class="m-bar"><span style="width:71%"></span></div>
+            </div>
+            <div class="metric">
+              <div class="m-row"><span>SAĞ/SOL SİMETRİ</span><b>%92</b></div>
+              <div class="m-bar"><span style="width:92%"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="dash-foot">
+          <div class="spark">
+            <div class="spark-label">VAS AĞRI TRENDİ <b>8 → 2</b> · 8 HAFTA</div>
+            <svg viewBox="0 0 162 44" preserveAspectRatio="none" aria-label="Sekiz haftalık ağrı skoru düşüş grafiği">
+              <polyline points="4,10 26,14 48,14 70,18 92,22 114,26 136,30 158,34"
+                        fill="none" stroke="#D9912B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="158" cy="34" r="3.5" fill="#F3F1EB"/>
+            </svg>
+          </div>
+          <div class="triage-chip">TRİYAJ: FİLTRE 3 · KISITLAMALI KABUL</div>
+        </div>
+        <div class="dash-note">Temsili veridir — gerçek üye verisi değildir.</div>
+        </div>
+      </div>
   </div>
 </section>
 
@@ -707,6 +726,14 @@
     if(a.closest('footer')) return; // footer link stays as standalone page navigation
     a.addEventListener('click',openModal);
   });
+  // hero panel: whole surface opens the modal (except the anchor, which handles itself)
+  const hg=document.getElementById('heroGame');
+  if(hg){
+    hg.addEventListener('click',function(ev){
+      if(ev.target.closest('a')) return;
+      openModal();
+    });
+  }
 })();
 </script>
 </body>
