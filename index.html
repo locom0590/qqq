@@ -18,7 +18,7 @@
     --steel:#7C8698;
     --ink:#171E2B;
     --line:rgba(23,30,43,.12);
-    --radius:22px;
+    --radius:22px;--ok:#8FD49B;--warn:#E8B15E;--bad:#E77D6A;
     --disp:'Archivo',system-ui,sans-serif;
     --body:'IBM Plex Sans',system-ui,sans-serif;
     --mono:'IBM Plex Mono',ui-monospace,monospace;
@@ -92,6 +92,20 @@
   .hg-body p{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--steel);margin-top:10px}
   .hg-avg{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:rgba(243,241,235,.5);margin-top:16px;border-top:1px solid rgba(243,241,235,.12);padding-top:14px;width:100%;max-width:280px}
   .lab-game .btn{margin-top:20px}
+  .hg-tabs{display:flex;gap:6px;background:rgba(243,241,235,.06);border:1px solid rgba(243,241,235,.12);border-radius:999px;padding:4px}
+  .hg-tab{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:rgba(243,241,235,.6);background:transparent;border:none;border-radius:999px;padding:7px 12px;cursor:pointer;transition:all .15s}
+  .hg-tab.on{background:var(--amber);color:var(--deep)}
+  .hg-pane{display:none}
+  .hg-pane.on{display:block}
+  .hg-mini{position:relative;z-index:1;padding:14px 4px 6px;cursor:default}
+  .hg-mini .sl{grid-template-columns:96px 1fr 22px;padding:7px 0;font-size:10px}
+  .hg-mini .hg-res{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(243,241,235,.12)}
+  .hg-mini .hg-num{font-family:var(--disp);font-weight:900;font-size:64px;line-height:.9;color:var(--amber);letter-spacing:-.03em}
+  .hg-mini .hg-num small{display:block;font-family:var(--mono);font-weight:400;font-size:10px;letter-spacing:.2em;color:rgba(243,241,235,.55);margin-bottom:6px}
+  .hg-mini .hg-meta{text-align:right;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:rgba(243,241,235,.65);line-height:1.9}
+  .hg-mini .hg-meta b{color:var(--bone);font-weight:500}
+  .hg-mini .hg-meta b.bad{color:var(--bad)}
+  .hg-mini .hg-link{display:block;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--amber);text-decoration:none}
   @media(max-width:900px){
     .hero{padding:26px 0 34px}
     .lab-game{order:-1}
@@ -195,6 +209,9 @@
   .rx-stage p{margin-top:14px;font-size:15px;color:var(--steel);max-width:36ch}
   .rx-stage.rx-go p{color:rgba(20,33,60,.75)}
   .rx-ms{font-family:var(--disp);font-weight:900;font-size:clamp(64px,16vw,110px);line-height:1;letter-spacing:-.02em}
+  .rx-ms.rx-live{font-variant-numeric:tabular-nums;color:rgba(243,241,235,.45)}
+  .rx-stage.rx-go .rx-ms.rx-live{color:var(--deep)}
+  .rx-ms.rx-live i{color:inherit;opacity:.7}
   .rx-ms i{font-style:normal;font-size:.32em;color:var(--amber);font-weight:800}
   .rx-stage.rx-go .rx-ms i{color:var(--deep)}
   .rx-rounds{display:flex;gap:10px;margin-top:22px}
@@ -215,6 +232,124 @@
   .rx-foot{padding:14px 22px;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--steel);position:relative;z-index:2}
   .rx-toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--bone);color:var(--deep);font-family:var(--mono);font-size:12.5px;padding:10px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:120}
   .rx-toast.rx-show{opacity:1}
+/* ---------- 1. Concept: the chain ---------- */
+  .chain{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:8px}
+  @media(max-width:700px){.chain{grid-template-columns:repeat(5,1fr);gap:8px}}
+  .link{background:rgba(243,241,235,.05);border:1px solid rgba(243,241,235,.12);border-radius:16px;padding:16px 10px;text-align:center}
+  .link .n{font-family:var(--disp);font-weight:900;font-size:34px;line-height:1;color:var(--bone)}
+  .link .l{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:rgba(243,241,235,.6);margin-top:8px;text-transform:uppercase}
+  .link.weak{border-color:rgba(231,125,106,.6);background:rgba(231,125,106,.08)}
+  .link.weak .n{color:var(--bad)}
+  .rule{display:flex;align-items:center;gap:14px;margin-top:22px;padding-top:18px;border-top:1px solid rgba(243,241,235,.12);flex-wrap:wrap}
+  .rule .eq{font-family:var(--mono);font-size:13px;color:rgba(243,241,235,.75);letter-spacing:.04em}
+  .rule .eq b{color:var(--amber);font-weight:500}
+  .rule .res{margin-left:auto;font-family:var(--disp);font-weight:800;font-size:20px;color:var(--bone)}
+  .rule .res small{font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.16em;color:var(--bad);margin-left:10px}
+
+  /* three pillars */
+  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
+  @media(max-width:760px){.pillars{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:28px 26px}
+  .card .k{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--amber);text-transform:uppercase}
+  .card h3{font-family:var(--disp);font-weight:800;font-size:20px;color:var(--navy);margin:10px 0 8px}
+  .card p{font-size:14.5px;color:#454e60}
+
+  /* ---------- 2. Report ---------- */
+  .rep{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:start}
+  @media(max-width:820px){.rep{grid-template-columns:1fr}}
+  .hero-num{display:flex;align-items:flex-end;gap:16px}
+  .hero-num .pi-big{font-family:var(--disp);font-weight:900;font-size:96px;line-height:.9;color:var(--bone);letter-spacing:-.03em}
+  .hero-num .pi-big span{font-size:30px;color:rgba(243,241,235,.4);letter-spacing:0}
+  .hero-num .side{padding-bottom:10px}
+  .hero-num .side .t{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:rgba(243,241,235,.55)}
+  .hero-num .side .v{font-family:var(--disp);font-weight:600;font-size:15px;color:var(--ok);margin-top:4px}
+  .pi-prog{margin-top:20px}
+  .pi-prog .m-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:rgba(243,241,235,.6);margin-bottom:6px}
+  .m-bar{height:6px;border-radius:99px;background:rgba(243,241,235,.12);overflow:hidden}
+  .m-bar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#D9912B,#E8B15E)}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+  .stat{background:rgba(243,241,235,.05);border:1px solid rgba(243,241,235,.1);border-radius:14px;padding:12px 14px}
+  .stat .t{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:rgba(243,241,235,.5);text-transform:uppercase}
+  .stat .v{font-family:var(--disp);font-weight:800;font-size:20px;color:var(--bone);margin-top:4px}
+  .stat .v.ok{color:var(--ok)}
+  .halkalar .row{display:grid;grid-template-columns:110px 1fr 28px;align-items:center;gap:12px;padding:9px 0;border-top:1px solid rgba(243,241,235,.08);font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:rgba(243,241,235,.8)}
+  .halkalar .row:first-child{border-top:0}
+  .seg{display:flex;gap:4px}
+  .seg i{flex:1;height:9px;border-radius:3px;background:rgba(243,241,235,.1)}
+  .seg i.f{background:var(--amber)}
+  .seg i.w{background:var(--bad)}
+  .halkalar .row .num{text-align:right;color:var(--bone);font-size:14px}
+  .halkalar .row.weak{color:var(--bad)}
+  .chip{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;border-radius:999px;padding:3px 9px;margin-left:8px;vertical-align:middle}
+  .chip.bad{color:var(--bad);border:1px solid rgba(231,125,106,.5)}
+  .chip.ok{color:var(--ok);border:1px solid rgba(143,212,155,.45);background:rgba(46,125,50,.16)}
+  .chip.warn{color:var(--warn);border:1px solid rgba(232,177,94,.5)}
+  .tl{margin-top:22px;padding-top:18px;border-top:1px solid rgba(243,241,235,.12)}
+  .tl .t{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:rgba(243,241,235,.55);margin-bottom:10px}
+  .tl svg{width:100%;height:auto;display:block}
+
+  /* ---------- 3. App mockup ---------- */
+  .app-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:center}
+  @media(max-width:860px){.app-grid{grid-template-columns:1fr}}
+  .phone{width:300px;margin:0 auto;background:var(--deep);border-radius:40px;padding:12px;box-shadow:0 40px 70px -30px rgba(17,29,51,.6)}
+  .screen{background:var(--bone);border-radius:30px;padding:18px 16px 14px;color:var(--ink)}
+  .s-top{display:flex;justify-content:space-between;align-items:center}
+  .s-top .who{font-family:var(--disp);font-weight:800;font-size:15px;color:var(--navy)}
+  .s-top .sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--steel)}
+  .s-lvl{text-align:center;margin:20px 0 8px}
+  .s-lvl .l{font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--steel);text-transform:uppercase}
+  .s-lvl .n{font-family:var(--disp);font-weight:900;font-size:72px;line-height:1;color:var(--navy);letter-spacing:-.03em}
+  .s-lvl .n span{font-size:22px;color:var(--steel);letter-spacing:0}
+  .s-lvl .d{font-size:12.5px;color:#2e7d32;font-weight:500;margin-top:6px}
+  .s-bar{margin:8px 6px 0}
+  .s-bar .r{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--steel)}
+  .s-bar .b{height:6px;border-radius:99px;background:var(--bone-2);margin-top:4px;overflow:hidden}
+  .s-bar .b i{display:block;height:100%;width:20%;background:var(--amber);border-radius:99px}
+  .s-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:12px}
+  .s-card .h{display:flex;justify-content:space-between;align-items:center;font-family:var(--disp);font-weight:700;font-size:13px;color:var(--navy)}
+  .s-card .h .chip{margin:0;color:#b5482f;border-color:rgba(181,72,47,.4)}
+  .rings{display:flex;justify-content:space-between;margin-top:10px}
+  .ring{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--steel)}
+  .ring b{width:40px;height:40px;border-radius:50%;background:var(--navy);color:var(--bone);display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-weight:800;font-size:15px}
+  .ring.weak b{background:#fff;color:#b5482f;border:2px solid #b5482f}
+  .s-two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .s-mini{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 12px}
+  .s-mini .t{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--steel);text-transform:uppercase}
+  .s-mini .v{font-family:var(--disp);font-weight:800;font-size:17px;color:var(--navy);margin-top:2px}
+  .s-mini .v.ok{color:#2e7d32}
+  .s-list{font-size:12px;color:#454e60}
+  .s-list div{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line)}
+  .s-list div:first-child{border-top:0}
+  .s-list span:last-child{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--steel)}
+  .s-nav{display:flex;justify-content:space-around;margin-top:14px;padding-top:10px;border-top:1px solid var(--line);font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--steel)}
+  .s-nav .on{color:var(--navy);font-weight:500}
+  .app-copy h3{font-family:var(--disp);font-weight:900;font-size:clamp(26px,3vw,34px);color:var(--navy);line-height:1.12;letter-spacing:-.01em}
+  .app-copy p{margin-top:14px;font-size:16px;color:#454e60;max-width:44ch}
+  .app-copy ul{list-style:none;margin-top:22px;display:grid;gap:12px}
+  .app-copy li{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;font-size:14.5px;color:#454e60}
+  .app-copy li b{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--amber);padding-top:4px}
+  .app-copy li strong{display:block;font-family:var(--disp);font-weight:700;font-size:15px;color:var(--navy);margin-bottom:2px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:600;font-size:14px;padding:11px 20px;border-radius:999px;border:1.5px solid var(--navy);color:var(--navy);background:transparent;margin-top:26px;text-decoration:none}
+  .btn.amber{background:var(--amber);border-color:var(--amber);color:var(--deep)}
+
+  /* ---------- 4. Demo calculator ---------- */
+  .calc{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+  @media(max-width:820px){.calc{grid-template-columns:1fr}}
+  .sl{display:grid;grid-template-columns:120px 1fr 26px;gap:12px;align-items:center;padding:10px 0;border-top:1px solid rgba(243,241,235,.08);font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:rgba(243,241,235,.75)}
+  .sl:first-child{border-top:0}
+  .sl input[type=range]{width:100%;accent-color:var(--amber);cursor:pointer}
+  .sl output{text-align:right;font-size:15px;color:var(--bone)}
+  .sl.weak{color:var(--bad)}
+  .sl.weak output{color:var(--bad)}
+  .out{background:rgba(243,241,235,.05);border:1px solid rgba(243,241,235,.12);border-radius:20px;padding:22px}
+  .out .pi-big{font-family:var(--disp);font-weight:900;font-size:84px;line-height:.9;color:var(--amber);letter-spacing:-.03em}
+  .out .pi-big small{font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.2em;color:rgba(243,241,235,.55);display:block;margin-bottom:8px}
+  .out .line{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:rgba(243,241,235,.65);padding:9px 0;border-top:1px solid rgba(243,241,235,.1)}
+  .out .line b{color:var(--bone);font-weight:500}
+  .out .line b.bad{color:var(--bad)}
+  .out .formula{margin-top:14px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:rgba(243,241,235,.45);line-height:1.7}
+  .out .formula em{color:var(--amber);font-style:normal}
+  .disc{margin-top:22px;font-size:13.5px;color:#596172;max-width:64ch}
 </style>
 </head>
 <body>
@@ -226,6 +361,7 @@
       <a href="#yaklasim">Yaklaşım</a>
       <a href="#programlar">Programlar</a>
       <a href="#ilkeler">İlkeler</a>
+      <a href="#prehab">Prehab Index</a>
       <a href="reaksiyon.html">Reaksiyon ⚡</a>
       <a href="#iletisim" class="btn solid">Değerlendirme Randevusu</a>
     </div>
@@ -248,15 +384,30 @@
     </div>
     <div class="lab lab-game" id="heroGame">
       <div class="dash-head">
-        <span class="dash-title">REAKSİYON LAB ⚡</span>
-        <span class="dash-tag">CANLI TEST</span>
+        <div class="hg-tabs" role="tablist">
+          <button class="hg-tab on" role="tab" aria-selected="true" data-pane="hgReaction">REAKSİYON LAB ⚡</button>
+          <button class="hg-tab" role="tab" aria-selected="false" data-pane="hgIndex">PREHAB INDEX</button>
+        </div>
+        <span class="dash-tag" id="hgTag">CANLI TEST</span>
       </div>
-      <div class="hg-body">
+      <div class="hg-pane hg-body on" id="hgReaction">
         <div class="hg-q">?<i>ms</i></div>
         <h3>Ne kadar hızlısın?</h3>
         <p>5 tur · tarayıcıda çalışır · uygulama gerekmez</p>
         <span class="hg-avg">ORTALAMA İNSAN: ~273 MS</span>
         <a class="btn amber" href="reaksiyon.html">Testi Başlat ⚡</a>
+      </div>
+      <div class="hg-pane hg-mini" id="hgIndex" data-calc>
+        <div class="sl"><span>AĞRI</span><input type="range" min="1" max="5" step="1" value="3" aria-label="Ağrı"><output>3</output></div>
+        <div class="sl"><span>HAREKET</span><input type="range" min="1" max="5" step="1" value="4" aria-label="Hareket"><output>4</output></div>
+        <div class="sl"><span>GÜÇ</span><input type="range" min="1" max="5" step="1" value="3" aria-label="Güç"><output>3</output></div>
+        <div class="sl"><span>KONTROL</span><input type="range" min="1" max="5" step="1" value="2" aria-label="Kontrol"><output>2</output></div>
+        <div class="sl"><span>DAYANIKLILIK</span><input type="range" min="1" max="5" step="1" value="2" aria-label="Dayanıklılık"><output>2</output></div>
+        <div class="hg-res">
+          <div class="hg-num"><small>PREHAB INDEX</small><span data-o="index">32</span></div>
+          <div class="hg-meta">SEVİYE <b data-o="lvl">2 / 5</b><br>İLERLEME <b data-o="pct">%60</b><br>SENİ TUTAN <b class="bad" data-o="weak">KONTROL</b></div>
+        </div>
+        <a class="hg-link" href="#prehab">Beş halka nasıl çalışır? Formülü gör →</a>
       </div>
     </div>
   </div>
@@ -283,7 +434,7 @@
     <div class="phase reveal">
       <div class="ph">04 · Swing</div>
       <h3>Sürdürülebilirlik</h3>
-      <p>4–6 haftalık periyodik yeniden değerlendirme ile uzun vadeli ilerleme.</p>
+      <p>4. haftada sınırlayıcı halka, 8. haftada tam Prehab Index ölçümü ile uzun vadeli ilerleme.</p>
     </div>
   </div>
 </div>
@@ -320,7 +471,7 @@
         <div class="num">ADIM / 04</div>
         <h3>Sürekli Takip</h3>
         <p>Semptomlar her seansta kaydedilir; herhangi bir kötüleşmede egzersiz durdurulur ve
-        üye aynı gün hekime geri yönlendirilir.</p>
+        üye aynı gün hekime geri yönlendirilir. İlerleme Prehab Index ile ölçülür ve sevk eden hekime raporlanır.</p>
       </div>
     </div>
   </div>
@@ -344,7 +495,7 @@
             <ul>
               <li>Üç filtreli klinik triyaj</li>
               <li>Bölgeye özel hareket kısıtlamaları</li>
-              <li>Periyodik yeniden değerlendirme</li>
+              <li>Prehab Index ile ilerleme takibi</li>
             </ul>
           </div>
           <div class="pcard reveal">
@@ -354,7 +505,7 @@
             <ul>
               <li>Hareket taraması ile başlangıç</li>
               <li>Kademeli yüklenme modeli</li>
-              <li>Veriyle takip edilen ilerleme</li>
+              <li>Prehab Index ile ilerleme takibi</li>
             </ul>
           </div>
           <div class="pcard reveal">
@@ -398,93 +549,230 @@
   </div>
 </section>
 
-<!-- DEĞERLENDİRME RAPORU -->
-<section id="rapor" style="padding-top:0">
+
+
+<!-- ===================== 1. KONSEPT ===================== -->
+<section id="prehab">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Prehab Index</div>
+      <h2>Vücudunuz en zayıf <span class="stroke">halkanız</span> kadar hazırdır.</h2>
+      <p>Beş halka, beş seviye. Puanları toplamıyoruz; hangi halkanın sizi tuttuğunu buluyoruz. Program o halkaya, hekim onay formundaki kısıtlamaların içinde kalarak yazılır; seviye o halka geçince değişir. Altı bölgenin her biri için ayrı kriter tablosu vardır.</p>
+    </div>
+
+    <div class="lab reveal">
+      <div class="dash">
+        <div class="dash-head">
+          <span class="dash-title">ZİNCİR MODELİ · PREHAB BEL</span>
+          <span class="dash-tag">HAFTA 0</span>
+        </div>
+        <div class="chain">
+          <div class="link"><div class="n">3</div><div class="l">Ağrı</div></div>
+          <div class="link"><div class="n">4</div><div class="l">Hareket</div></div>
+          <div class="link"><div class="n">3</div><div class="l">Güç</div></div>
+          <div class="link weak"><div class="n">2</div><div class="l">Kontrol</div></div>
+          <div class="link weak"><div class="n">2</div><div class="l">Dayanıklılık</div></div>
+        </div>
+        <div class="rule">
+          <span class="eq">ortalama <b>2,8</b> · tavan = en zayıf + 1 = <b>3</b></span>
+          <span class="res">Seviye 3 <small>SINIRLAYICI: KONTROL</small></span>
+        </div>
+        <div class="lab-note">HER HALKA 1–5 · SEVİYE = ORTALAMA, EN ZAYIF HALKA + 1'İ GEÇEMEZ · ÖLÇÜMLER STÜDYODA, DEĞERLENDİRME EKİBİ EŞLİĞİNDE · ALTI BÖLGE İÇİN AYRI KRİTER TABLOSU</div>
+      </div>
+    </div>
+
+    <div class="pillars reveal">
+      <div class="card">
+        <div class="k">Nerede</div>
+        <h3>Seviye</h3>
+        <p>1'den 5'e tek bir sayı. Ağrı, hareket, güç, kontrol ve yük toleransı için somut geçiş kriterleri; hepsini sağlamayan üst seviyeye çıkmaz. Yük toleransı yalnızca hekimin serbest bıraktığı hareket gruplarında test edilir.</p>
+      </div>
+      <div class="card">
+        <div class="k">Nereye</div>
+        <h3>İlerleme</h3>
+        <p>Hedef seviye işinize ve sporunuza göre belirlenir. 4. haftada sınırlayıcı halka, 8. haftada tüm halkalar yeniden ölçülür; kapatılan açık yüzde olarak raporlanır.</p>
+      </div>
+      <div class="card">
+        <div class="k">Ne kaçırıyoruz</div>
+        <h3>Risk bayrağı</h3>
+        <p>Asimetri, önceki atak, hareket korkusu. Seviye yükselse bile bayrak düşmeden "hazır" demeyiz. Sevk eden hekime giden raporun ilk satırı budur.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 2. 12 HAFTA RAPORU ===================== -->
+<section id="rapor-ornek" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head reveal">
       <h2>Ölçmediğimizi programlamayız.</h2>
-      <p>Her üyenin dosyasında skorlar, kısıtlamalar ve kontrol tarihleri yazılı olarak durur.
-      Aşağıdaki temsili rapor, değerlendirme çıktımızın yapısını gösterir.</p>
+      <p>Her üyenin dosyasında halka seviyeleri, hekim kısıtlamaları ve kontrol tarihleri yazılı olarak durur. Temsili bir dosya: kronik bel şikayetiyle hekim değerlendirmesinden üçüncü filtre (kısıtlamalı kabul) ile geldi; dört ölçüm, bir seviye atlama, risk bayrağı düştü.</p>
     </div>
-      <div class="lab reveal" style="max-width:680px;margin:0 auto">
-        <div class="dash">
-          <div class="dash-head">
-            <span class="dash-title">DEĞERLENDİRME ÖZETİ</span>
-            <span class="dash-tag">ÖRNEK RAPOR</span>
+
+    <div class="lab reveal">
+      <div class="dash">
+        <div class="dash-head">
+          <span class="dash-title">PREHAB BEL · 12. HAFTA RAPORU</span>
+          <span class="dash-tag">ÖRNEK DOSYA · A.K. · 45 · TRİYAJ FİLTRE 3</span>
+        </div>
+        <div class="rep">
+          <div>
+            <div class="hero-num">
+              <div class="pi-big">4<span>/5</span></div>
+              <div class="side">
+                <div class="t">BEL SEVİYESİ</div>
+                <div class="v">↗ 12 haftada 3 → 4</div>
+              </div>
+            </div>
+            <div class="pi-prog">
+              <div class="m-row"><span>SEVİYE 5'E</span><span>%20</span></div>
+              <div class="m-bar"><span style="width:20%"></span></div>
+            </div>
+            <div class="stats">
+              <div class="stat"><div class="t">Hedef</div><div class="v ok">4 ✓</div></div>
+              <div class="stat"><div class="t">Kapatılan açık</div><div class="v">%100</div></div>
+              <div class="stat"><div class="t">Risk</div><div class="v ok">Düşük</div></div>
+            </div>
+            <div class="tl">
+              <div class="t">HALKA SEVİYELERİ · HAFTA 0 → 12 <span style="color:var(--amber)">■ ort.</span> <span style="color:var(--bad)">■ dayanıklılık</span></div>
+              <svg viewBox="0 0 420 110" role="img" aria-label="Ortalama halka seviyesi 2,8'den 4,0'a; dayanıklılık 2'den 3'e">
+                <g stroke="rgba(243,241,235,.12)" stroke-width="1">
+                  <line x1="30" y1="14" x2="410" y2="14"/><line x1="30" y1="38" x2="410" y2="38"/><line x1="30" y1="62" x2="410" y2="62"/><line x1="30" y1="86" x2="410" y2="86"/>
+                </g>
+                <g font-family="IBM Plex Mono, monospace" font-size="9" fill="rgba(243,241,235,.45)">
+                  <text x="8" y="17">5</text><text x="8" y="41">4</text><text x="8" y="65">3</text><text x="8" y="89">2</text>
+                  <text x="30" y="106">H0</text><text x="150" y="106">H4</text><text x="270" y="106">H8</text><text x="392" y="106">H12</text>
+                </g>
+                <polyline points="34,86 154,86 274,62 394,62" fill="none" stroke="#E77D6A" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round"/>
+                <polyline points="34,66.8 154,62 274,47.6 394,38" fill="none" stroke="#D9912B" stroke-width="2.5" stroke-linejoin="round"/>
+                <g fill="#D9912B"><circle cx="34" cy="66.8" r="4"/><circle cx="154" cy="62" r="4"/><circle cx="274" cy="47.6" r="4"/><circle cx="394" cy="38" r="4.5"/></g>
+                <g fill="#E77D6A"><circle cx="34" cy="86" r="3"/><circle cx="154" cy="86" r="3"/><circle cx="274" cy="62" r="3"/><circle cx="394" cy="62" r="3"/></g>
+              </svg>
+            </div>
           </div>
-        <div class="dash-grid">
-          <div class="radar-wrap">
-            <svg viewBox="0 0 300 300" role="img" aria-label="Altı vücut bölgesi için hareket skoru radar grafiği">
-              <!-- rings -->
-              <polygon points="150,45 240.9,97.5 240.9,202.5 150,255 59.1,202.5 59.1,97.5" fill="none" stroke="rgba(243,241,235,0.16)" stroke-width="1"/>
-              <polygon points="150,80.7 210,115.35 210,184.65 150,219.3 90,184.65 90,115.35" fill="none" stroke="rgba(243,241,235,0.12)" stroke-width="1"/>
-              <polygon points="150,115.35 180,132.7 180,167.3 150,184.65 120,167.3 120,132.7" fill="none" stroke="rgba(243,241,235,0.10)" stroke-width="1"/>
-              <!-- axes -->
-              <g stroke="rgba(243,241,235,0.10)" stroke-width="1">
-                <line x1="150" y1="150" x2="150" y2="45"/>
-                <line x1="150" y1="150" x2="240.9" y2="97.5"/>
-                <line x1="150" y1="150" x2="240.9" y2="202.5"/>
-                <line x1="150" y1="150" x2="150" y2="255"/>
-                <line x1="150" y1="150" x2="59.1" y2="202.5"/>
-                <line x1="150" y1="150" x2="59.1" y2="97.5"/>
-              </g>
-              <!-- data -->
-              <polygon points="150,68.1 206.4,117.45 213.66,186.75 150,219.3 97.3,180.45 82.7,111.15"
-                       fill="rgba(217,145,43,0.20)" stroke="#D9912B" stroke-width="2" stroke-linejoin="round"/>
-              <g fill="#D9912B">
-                <circle cx="150" cy="68.1" r="4"/>
-                <circle cx="206.4" cy="117.45" r="4"/>
-                <circle cx="213.66" cy="186.75" r="4"/>
-                <circle cx="150" cy="219.3" r="4"/>
-                <circle cx="97.3" cy="180.45" r="4"/>
-                <circle cx="82.7" cy="111.15" r="4"/>
-              </g>
-              <!-- labels -->
-              <g font-family="IBM Plex Mono, monospace" font-size="10" fill="rgba(243,241,235,0.6)" letter-spacing="1">
-                <text x="150" y="32" text-anchor="middle">BEL/BOYUN</text>
-                <text x="252" y="92" text-anchor="start">OMUZ</text>
-                <text x="252" y="214" text-anchor="start">DİZ</text>
-                <text x="150" y="276" text-anchor="middle">KALÇA</text>
-                <text x="48" y="214" text-anchor="end">AYAK B.</text>
-                <text x="48" y="92" text-anchor="end">DİRSEK</text>
-              </g>
-            </svg>
-          </div>
-          <div class="metrics">
-            <div class="metric">
-              <div class="m-row"><span>MOBİLİTE</span><b>78<i>/100</i></b></div>
-              <div class="m-bar"><span style="width:78%"></span></div>
+
+          <div class="halkalar">
+            <div class="row"><span>AĞRI</span><span class="seg"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></span><span class="num">4</span></div>
+            <div class="row"><span>HAREKET</span><span class="seg"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></span><span class="num">5</span></div>
+            <div class="row"><span>GÜÇ</span><span class="seg"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></span><span class="num">4</span></div>
+            <div class="row"><span>KONTROL</span><span class="seg"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></span><span class="num">4</span></div>
+            <div class="row weak"><span>DAYANIKLILIK</span><span class="seg"><i class="w"></i><i class="w"></i><i class="w"></i><i></i><i></i></span><span class="num">3</span></div>
+
+            <div class="tl">
+              <div class="t">ÖLÇÜM ÇİZELGESİ</div>
+              <div class="row" style="grid-template-columns:1fr auto"><span>H0 · TAM DEĞERLENDİRME</span><span>SEVİYE 3 · %20 <span class="chip warn">ORTA</span></span></div>
+              <div class="row" style="grid-template-columns:1fr auto"><span>H4 · SINIRLAYICI HALKA</span><span>KONTROL 2 → 3</span></div>
+              <div class="row" style="grid-template-columns:1fr auto"><span>H8 · TAM DEĞERLENDİRME</span><span>SEVİYE 3 · %60 <span class="chip warn">ORTA</span></span></div>
+              <div class="row" style="grid-template-columns:1fr auto"><span>H12 · TAM DEĞERLENDİRME</span><span>SEVİYE 4 · %20 <span class="chip ok">DÜŞÜK</span></span></div>
             </div>
-            <div class="metric">
-              <div class="m-row"><span>STABİLİTE</span><b>64<i>/100</i></b></div>
-              <div class="m-bar"><span style="width:64%"></span></div>
-            </div>
-            <div class="metric">
-              <div class="m-row"><span>KUVVET</span><b>71<i>/100</i></b></div>
-              <div class="m-bar"><span style="width:71%"></span></div>
-            </div>
-            <div class="metric">
-              <div class="m-row"><span>SAĞ/SOL SİMETRİ</span><b>%92</b></div>
-              <div class="m-bar"><span style="width:92%"></span></div>
+            <div class="tl">
+              <div class="t">RİSK FAKTÖRLERİ</div>
+              <div class="row" style="grid-template-columns:1fr auto"><span>Y-BALANCE ASİMETRİ %18 → %8</span><span style="color:var(--ok)">KAPANDI</span></div>
+              <div class="row" style="grid-template-columns:1fr auto"><span>SORENSEN 45 → 95 SN</span><span style="color:var(--ok)">KAPANDI</span></div>
+              <div class="row" style="grid-template-columns:1fr auto"><span>TSK-11 30 → 21</span><span style="color:var(--ok)">KAPANDI</span></div>
+              <div class="row" style="grid-template-columns:1fr auto"><span>SON 12 AYDA ATAK</span><span style="color:var(--warn)">DEVAM · 1</span></div>
             </div>
           </div>
         </div>
-        <div class="dash-foot">
-          <div class="spark">
-            <div class="spark-label">VAS AĞRI TRENDİ <b>8 → 2</b> · 8 HAFTA</div>
-            <svg viewBox="0 0 162 44" preserveAspectRatio="none" aria-label="Sekiz haftalık ağrı skoru düşüş grafiği">
-              <polyline points="4,10 26,14 48,14 70,18 92,22 114,26 136,30 158,34"
-                        fill="none" stroke="#D9912B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="158" cy="34" r="3.5" fill="#F3F1EB"/>
-            </svg>
-          </div>
-          <div class="triage-chip">TRİYAJ: FİLTRE 3 · KISITLAMALI KABUL</div>
-        </div>
-        <div class="dash-note">Temsili veridir — gerçek üye verisi değildir.</div>
-        </div>
+        <div class="lab-note">SONRAKİ 8 HAFTA: DAYANIKLILIK 3 → 4 · H16 SORENSEN TEKRAR · H20 TAM DEĞERLENDİRME · RAPOR SEVK EDEN HEKİME İLETİLDİ · TEMSİLİ VERİDİR, GERÇEK ÜYE VERİSİ DEĞİLDİR</div>
       </div>
+    </div>
   </div>
 </section>
+
+<!-- ===================== 3. UYGULAMA ===================== -->
+<section id="uygulama" style="padding-top:0">
+  <div class="wrap">
+    <div class="app-grid reveal">
+      <div class="phone" role="img" aria-label="Locomotion uygulaması ana ekranı: bel seviyesi 4, sınırlayıcı halka dayanıklılık, risk düşük">
+        <div class="screen">
+          <div class="s-top">
+            <div><div class="who">Merhaba Ahmet</div><div class="sub">PREHAB BEL · 12. HAFTA</div></div>
+            <div class="sub">LOCOMOTION</div>
+          </div>
+          <div class="s-lvl">
+            <div class="l">Bel seviyen</div>
+            <div class="n">4<span>/5</span></div>
+            <div class="d">↗ 3'ten 4'e · hedefe ulaştın</div>
+          </div>
+          <div class="s-bar"><div class="r"><span>SEVİYE 5'E</span><span>%20</span></div><div class="b"><i></i></div></div>
+          <div class="s-card">
+            <div class="h"><span>Zincirin</span><span class="chip">SENİ TUTAN: DAYANIKLILIK</span></div>
+            <div class="rings">
+              <div class="ring"><b>4</b>AĞRI</div>
+              <div class="ring"><b>5</b>HAREKET</div>
+              <div class="ring"><b>4</b>GÜÇ</div>
+              <div class="ring"><b>4</b>KONTROL</div>
+              <div class="ring weak"><b>3</b>DAYAN.</div>
+            </div>
+          </div>
+          <div class="s-two">
+            <div class="s-mini"><div class="t">Risk</div><div class="v ok">Düşük</div></div>
+            <div class="s-mini"><div class="t">Yeni hedef</div><div class="v">4 · %60</div></div>
+          </div>
+          <div class="s-card s-list">
+            <div><span>Dayanıklılık seansı</span><span>SAL · PER</span></div>
+            <div><span>Sorensen tekrar ölçümü</span><span>HAFTA 16</span></div>
+            <div><span>Hekim raporu</span><span style="color:#2e7d32">GÖNDERİLDİ</span></div>
+          </div>
+          <div class="s-nav"><span class="on">ANA</span><span>İLERLEME</span><span>SEANSLAR</span><span>PROFİL</span></div>
+        </div>
+      </div>
+
+      <div class="app-copy">
+        <div class="eyebrow">Üye uygulaması</div>
+        <h3>Tek sayı. Tek hedef. Bu haftanın işi.</h3>
+        <p>Üye ekranı klinik dosyanın sadeleştirilmiş hâlidir: seviyeniz, sizi tutan halka, risk bayrağınız ve bu haftaki seanslar. Ham ölçümler ve hekim raporları profil sekmesinde durur.</p>
+        <ul>
+          <li><b>01</b><div><strong>Seviye</strong>Stüdyoda ölçülür, uygulamada görünür. Uzaktan test yok; her sayı değerlendirme ekibi eşliğinde alınır, her seansta VAS kaydı tutulur.</div></li>
+          <li><b>02</b><div><strong>Sınırlayıcı halka</strong>Program neden buna odaklandı, tek cümleyle. 4. haftada yalnızca bu halka tekrar ölçülür.</div></li>
+          <li><b>03</b><div><strong>Hekim raporu</strong>Her tam değerlendirmede sevk eden hekime aynı yapıda rapor gider; üye gönderildiğini görür.</div></li>
+        </ul>
+        <a class="btn amber" href="#iletisim">Değerlendirme randevusu →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== 4. DEMO HESAPLAYICI ===================== -->
+<section id="hesapla" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>Hesabı kendiniz deneyin.</h2>
+      <p>Bu bir tanı aracı değil, formülün nasıl çalıştığını gösteren bir deneme alanı. Halkaları kaydırın, tek bir zayıf halkanın puanı nasıl tuttuğunu görün. Gerçek ölçüm yalnızca stüdyoda, hekim onayından sonra yapılır; buraya girdiğiniz hiçbir değer kaydedilmez.</p>
+    </div>
+    <div class="lab reveal">
+      <div class="dash">
+        <div class="dash-head">
+          <span class="dash-title">PREHAB INDEX · DENEME HESABI</span>
+          <span class="dash-tag">VERİ KAYDEDİLMEZ</span>
+        </div>
+        <div class="calc" data-calc>
+          <div id="sliders">
+            <div class="sl"><span>AĞRI</span><input type="range" min="1" max="5" step="1" value="3" aria-label="Ağrı halkası seviyesi"><output>3</output></div>
+            <div class="sl"><span>HAREKET</span><input type="range" min="1" max="5" step="1" value="4" aria-label="Hareket halkası seviyesi"><output>4</output></div>
+            <div class="sl"><span>GÜÇ</span><input type="range" min="1" max="5" step="1" value="3" aria-label="Güç halkası seviyesi"><output>3</output></div>
+            <div class="sl"><span>KONTROL</span><input type="range" min="1" max="5" step="1" value="2" aria-label="Kontrol halkası seviyesi"><output>2</output></div>
+            <div class="sl"><span>DAYANIKLILIK</span><input type="range" min="1" max="5" step="1" value="2" aria-label="Dayanıklılık halkası seviyesi"><output>2</output></div>
+          </div>
+          <div class="out" aria-live="polite">
+            <div class="pi-big"><small>PREHAB INDEX</small><span data-o="index">44</span></div>
+            <div class="line" style="margin-top:16px"><span>SEVİYE</span><b data-o="lvl">3 / 5</b></div>
+            <div class="line"><span>SEVİYE İÇİ İLERLEME</span><b data-o="pct">%20</b></div>
+            <div class="line"><span>SINIRLAYICI HALKA</span><b class="bad" data-o="weak">KONTROL</b></div>
+            <div class="line"><span>ORTALAMA / TAVAN</span><b data-o="avg">2,8 / 3</b></div>
+            <div class="formula">seviye = min( ⌊ortalama⌋ , en zayıf + 1 )<br>ilerleme = üst seviyeyi geçen halka / 5<br>index = <em>(seviye − 1) × 20 + ilerleme × 0,2</em></div>
+          </div>
+        </div>
+        <div class="lab-note">RİSK BAYRAĞI PUANA DAHİL DEĞİLDİR · GERÇEK SEVİYE KRİTERLERİ STÜDYO PROTOKOLÜNDE TANIMLIDIR</div>
+      </div>
+    </div>
+    <p class="disc reveal">Gerçek Prehab Index'iniz hekim değerlendirmesi ve klinik triyajdan sonra ölçülür. Ölçüm 45–60 dakika sürer; seviyeniz ve sınırlayıcı halkanız aynı gün dosyanıza yazılır.</p>
+  </div>
+</section>
+
+
 
 <!-- CTA -->
 <section id="iletisim" style="padding-top:0">
@@ -515,6 +803,7 @@
         <a href="#yaklasim">Yaklaşım</a>
         <a href="#programlar">Programlar</a>
         <a href="#ilkeler">İlkeler</a>
+        <a href="#prehab">Prehab Index</a>
         <a href="reaksiyon.html">Reaksiyon Lab ⚡</a>
       </div>
       <div class="foot-col">
@@ -588,7 +877,14 @@
     'Ayrıntılı bilgi ve veri sorumlusu iletişim bilgileri için: locomotion.com.tr/kvkk<br>'+
     'Veri Sorumlusu: [Locomotion — ticari unvan/adres]';
 
-  let state='idle', times=[], goAt=0, timerId=null;
+  let state='idle', times=[], goAt=0, timerId=null, rafId=null;
+  function fmt(ms){ return (ms/1000).toFixed(3); }
+  function counter(ms){ return '<div class="rx-ms rx-live" id="rxLive">'+fmt(ms)+'<i> sn</i></div>'; }
+  function tick(){
+    const el=document.getElementById('rxLive');
+    if(el) el.firstChild.nodeValue=fmt(performance.now()-goAt);
+    rafId=requestAnimationFrame(tick);
+  }
 
   function shareUrl(avg){
     const dir = window.location.pathname.replace(/[^/]*$/, '');
@@ -632,28 +928,33 @@
     state='waiting'; stage.className='rx-stage rx-waiting';
     content.innerHTML=
       '<div class="rx-eyebrow">Tur '+(times.length+1)+' / '+TOTAL_ROUNDS+'</div>'+
-      '<h3>Bekle…</h3>'+
-      '<p>Amber rengi görünce dokun. Erken dokunma!</p>'+dots();
+      counter(0)+
+      '<p>Amber rengi görünce sayaç başlar; dokunduğun an durur. Erken dokunma!</p>'+dots();
     timerId=setTimeout(function(){
       state='go'; stage.className='rx-stage rx-go'; goAt=performance.now();
-      content.innerHTML='<div class="rx-eyebrow">Şimdi</div><h3>DOKUN!</h3>';
+      content.innerHTML='<div class="rx-eyebrow">Şimdi — dokun</div>'+counter(0)+dots();
+      rafId=requestAnimationFrame(tick);
     }, 1500+Math.random()*2500);
   }
   function earlyTap(){
-    clearTimeout(timerId); state='early'; stage.className='rx-stage rx-early';
+    clearTimeout(timerId); cancelAnimationFrame(rafId); state='early'; stage.className='rx-stage rx-early';
     content.innerHTML=
       '<div class="rx-eyebrow">Erken!</div>'+
       '<h3>Amber\'i beklemen gerekiyordu.</h3>'+
       '<p>Dokun, aynı turu tekrar deneyelim.</p>'+dots();
   }
   function recordTap(){
+    cancelAnimationFrame(rafId);
+    const live=document.getElementById('rxLive');
     const ms=Math.round(performance.now()-goAt);
+    if(live) live.firstChild.nodeValue=fmt(ms);
     times.push(ms);
     if(times.length>=TOTAL_ROUNDS){ showFinal(); return; }
     state='roundResult'; stage.className='rx-stage';
     content.innerHTML=
       '<div class="rx-eyebrow">Tur '+times.length+' / '+TOTAL_ROUNDS+'</div>'+
-      '<div class="rx-ms">'+ms+'<i> ms</i></div>'+dots()+
+      '<div class="rx-ms">'+fmt(ms)+'<i> sn</i></div>'+
+      '<p style="font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--bone)">'+ms+' MS</p>'+dots()+
       '<p>Devam etmek için dokun.</p>';
   }
   function rating(avg){
@@ -677,11 +978,16 @@
         '<div class="rx-rescell"><div class="rx-lbl">Tur Sayısı</div><div class="rx-val">'+TOTAL_ROUNDS+'</div></div>'+
       '</div>'+
       '<div class="rx-rating">'+rating(avg)+'</div>'+
+      '<p style="margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:rgba(243,241,235,.6)">REAKSİYON, PREHAB INDEX\u2019İN <b style="color:var(--amber)">KONTROL</b> HALKASININ BİR PARÇASIDIR. <a href="#hesapla" id="rxBridge" style="color:var(--amber);text-decoration:underline">BEŞ HALKANIN HESABINI DENE \u2192</a></p>'+
       '<div class="rx-btnrow">'+
         '<button class="rx-btn" id="rxShareBtn">Meydan Oku 🔗</button>'+
         '<button class="rx-btn rx-ghost" id="rxAgainBtn">Tekrar</button>'+
       '</div>';
     document.getElementById('rxAgainBtn').addEventListener('click',function(e){e.stopPropagation();times=[];startRound();});
+    document.getElementById('rxBridge').addEventListener('click',function(e){
+      e.preventDefault(); e.stopPropagation(); closeModal();
+      const t=document.getElementById('hesapla'); if(t) t.scrollIntoView({behavior:'smooth'});
+    });
     document.getElementById('rxShareBtn').addEventListener('click',function(e){
       e.stopPropagation();
       const url=shareUrl(avg);
@@ -713,7 +1019,7 @@
     else { showConsent(); }
   }
   function closeModal(){
-    clearTimeout(timerId);
+    clearTimeout(timerId); cancelAnimationFrame(rafId);
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden','true');
     document.body.style.overflow='';
@@ -730,10 +1036,48 @@
   const hg=document.getElementById('heroGame');
   if(hg){
     hg.addEventListener('click',function(ev){
-      if(ev.target.closest('a')) return;
+      if(ev.target.closest('a')||ev.target.closest('.hg-tabs')||ev.target.closest('#hgIndex')) return;
       openModal();
     });
+    const tabs=hg.querySelectorAll('.hg-tab');
+    tabs.forEach(function(t){
+      t.addEventListener('click',function(){
+        tabs.forEach(function(x){x.classList.remove('on');x.setAttribute('aria-selected','false');});
+        t.classList.add('on'); t.setAttribute('aria-selected','true');
+        hg.querySelectorAll('.hg-pane').forEach(function(pn){pn.classList.toggle('on',pn.id===t.dataset.pane);});
+        document.getElementById('hgTag').textContent=t.dataset.pane==='hgIndex'?'DENEME HESABI':'CANLI TEST';
+        hg.style.cursor=t.dataset.pane==='hgIndex'?'default':'pointer';
+      });
+    });
   }
+})();
+
+/* ---------- prehab demo calculator (all instances) ---------- */
+(function(){
+  const names=['AĞRI','HAREKET','GÜÇ','KONTROL','DAYANIKLILIK'];
+  document.querySelectorAll('[data-calc]').forEach(function(box){
+    const rows=[...box.querySelectorAll('.sl')];
+    const out=function(k){return box.querySelector('[data-o="'+k+'"]');};
+    function calc(){
+      const v=rows.map(r=>+r.querySelector('input').value);
+      rows.forEach((r,i)=>r.querySelector('output').textContent=v[i]);
+      const avg=v.reduce((a,b)=>a+b,0)/5;
+      const mn=Math.min(...v);
+      const lvl=Math.min(Math.floor(avg),mn+1);
+      const above=v.filter(x=>x>lvl).length;
+      const pct=lvl>=5?100:Math.round(above/5*100);
+      const idx=Math.round((lvl-1)*20+pct*0.2);
+      const weakIdx=v.indexOf(mn);
+      rows.forEach((r,i)=>r.classList.toggle('weak',v[i]===mn && lvl<5));
+      if(out('index')) out('index').textContent=idx;
+      if(out('lvl')) out('lvl').textContent=lvl+' / 5';
+      if(out('pct')) out('pct').textContent='%'+pct;
+      if(out('weak')) out('weak').textContent=lvl>=5?'—':names[weakIdx];
+      if(out('avg')) out('avg').textContent=avg.toFixed(1).replace('.',',')+' / '+(mn+1);
+    }
+    rows.forEach(r=>r.querySelector('input').addEventListener('input',calc));
+    calc();
+  });
 })();
 </script>
 </body>
